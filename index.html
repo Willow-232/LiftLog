@@ -3,41 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>LiftLog</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#e8590c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="LiftLog">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#100e17">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>LiftLog</title>
 
 <!-- LiftLog: a personal Hevy-style workout tracker. MIT License. Single file, no dependencies. Host anywhere. -->
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--tx:#14171c;--sub:#6b7280;--ac:#e8590c;--ln:#e3e5ea;--ok:#2f9e44;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#1a1d24;--tx:#eceef2;--sub:#98a0ad;--ac:#ff8a3d;--ln:#2a2e38;--ok:#51cf66}}
-:root[data-theme="dark"]{--bg:#0f1115;--card:#1a1d24;--tx:#eceef2;--sub:#98a0ad;--ac:#ff8a3d;--ln:#2a2e38;--ok:#51cf66}
+:root{--bg:#f6f4fb;--card:#fff;--tx:#17131f;--sub:#6c6678;--ac:#7048e8;--on-ac:#fff;--ln:#e6e2ef;--ok:#2f9e44;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#100e17;--card:#1b1826;--tx:#efecf6;--sub:#a09bb2;--ac:#b197fc;--on-ac:#150c2e;--ln:#2c2839;--ok:#51cf66}}
+:root[data-theme="dark"]{--bg:#100e17;--card:#1b1826;--tx:#efecf6;--sub:#a09bb2;--ac:#b197fc;--on-ac:#150c2e;--ln:#2c2839;--ok:#51cf66}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 main{max-width:560px;margin:0 auto;padding:16px 14px 110px}
 h2{margin:6px 0 12px;font-size:24px}h3{margin:20px 0 8px;font-size:15px;color:var(--sub);text-transform:uppercase;letter-spacing:.05em}
 .card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:12px;margin-bottom:10px}
 .sub{color:var(--sub);font-size:13px}.row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}.sp{justify-content:space-between}
-button{font:inherit;border:0;border-radius:10px;padding:9px 14px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
+button{font:inherit;border:0;border-radius:10px;padding:9px 14px;background:var(--ac);color:var(--on-ac);font-weight:600;cursor:pointer}
 button.ghost{background:transparent;color:var(--sub);border:1px solid var(--ln)}button.big{width:100%;padding:14px;font-size:17px}
 button.red{background:#e03131}
 input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:9px;padding:8px;width:100%}
 input.title{font-size:22px;font-weight:700;border:0;background:transparent;padding:4px 0}
 .set{display:grid;grid-template-columns:28px 1fr 80px 70px 40px;gap:6px;align-items:center;margin-top:6px}
-.set input{text-align:center;padding:7px 4px}input::placeholder{color:var(--sub);opacity:.55}.set .sub{text-align:center}
+.set input{text-align:center;padding:7px 4px}input::placeholder{color:var(--sub);opacity:.55}.set .sub{text-align:center}.set.done{background:rgba(47,158,68,.2);box-shadow:0 0 0 4px rgba(47,158,68,.2);border-radius:8px}.set.done input{background:transparent;border-color:transparent}
 .chk{padding:8px 0;background:var(--ln);color:var(--sub)}.chk.on{background:var(--ok);color:#fff}
 .hd{font-size:11px;color:var(--sub);text-transform:uppercase}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--ln);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
 nav button{flex:1;background:none;color:var(--sub);border-radius:0;padding:12px 2px;font-size:12px}nav button.on{color:var(--ac)}
-#rest{position:fixed;left:12px;right:12px;bottom:calc(64px + env(safe-area-inset-bottom,0px));background:var(--ac);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700;display:none;z-index:6;justify-content:space-between}
+#rest{position:fixed;left:12px;right:12px;bottom:calc(64px + env(safe-area-inset-bottom,0px));background:var(--ac);color:var(--on-ac);border-radius:12px;padding:10px 14px;font-weight:700;display:none;z-index:6;justify-content:space-between}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10;display:flex;align-items:flex-end}
 .sheet{background:var(--bg);width:100%;max-height:80%;overflow:auto;border-radius:18px 18px 0 0;padding:14px;max-width:560px;margin:0 auto}
 .item{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.sw{position:relative;overflow:hidden;padding:0;cursor:default}.swin{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;background:var(--bg);position:relative;z-index:1;width:100%;transition:transform .2s;cursor:pointer}.sw.open .swin{transform:translateX(-150px)}.swact{position:absolute;right:0;top:0;bottom:0;width:150px;display:flex;z-index:0;pointer-events:none}.sw.open .swact{pointer-events:auto}.swact button{flex:1;border-radius:0}.rt{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}.rt.dragging{position:relative;z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.3)}.rt.over{outline:2px dashed var(--ac)}
+#kp{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--ln);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));grid-template-columns:repeat(4,1fr);gap:8px}#kp button{background:var(--card);color:var(--tx);font-size:22px;font-weight:500;padding:14px 0;border:1px solid var(--ln);touch-action:manipulation}#kp .o{background:var(--ln)}#kp .nx{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}body.kp main{padding-bottom:340px}.set input:focus{border-color:var(--ac);outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 10px;border-radius:16px;border:1px solid var(--ln);background:var(--bg);font-size:13px;cursor:pointer;color:var(--tx)}.chip.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}.chip.dis{opacity:.3;pointer-events:none}
 .toast{background:var(--ok);color:#fff;padding:10px 14px;border-radius:10px;margin-bottom:10px;font-weight:600}
 .chart{width:100%;height:auto;background:var(--card);border:1px solid var(--ln);border-radius:12px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats .card{text-align:center;margin:0}.stats b{font-size:22px;display:block}
@@ -46,6 +50,7 @@ nav button{flex:1;background:none;color:var(--sub);border-radius:0;padding:12px 
 <body>
 <main id="app"></main>
 <div id="rest"><span id="rt"></span><span data-a="skip" style="cursor:pointer">Skip</span></div>
+<div id="kp" style="display:none"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="hide" class="o">⌨︎</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="+" class="o">+</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="-" class="o">−</button><button data-k=".">.</button><button data-k="0">0</button><button data-k="bk">⌫</button><button data-k="next" class="nx">→</button></div>
 <nav>
 <button data-t="w">🏋️<br>Workout</button><button data-t="h">🗒️<br>History</button><button data-t="s">📈<br>Stats</button><button data-t="e">💪<br>Exercises</button><button data-t="m">⚙️<br>More</button>
 </nav>
@@ -57,19 +62,25 @@ const MUS={"Bench Press":"Chest/Triceps/Front Delts","Incline Dumbbell Press":"U
 const MG="Chest,Upper Chest,Lats,Mid Back,Lower Back,Traps,Rhomboids,Front Delts,Side Delts,Rear Delts,Biceps,Triceps,Forearms,Quadriceps,Hamstrings,Glutes,Adductors,Calves,Abs,Obliques,Core,Hip Flexors".split(",");
 const BM_old={"Chest":'<rect x="20" y="28" width="20" height="10" rx="3"/>',"Upper Chest":'<rect x="21" y="26" width="18" height="6" rx="3"/>',"Front Delts":'<circle cx="16" cy="28" r="4.5"/><circle cx="44" cy="28" r="4.5"/>',"Side Delts":'<circle cx="12" cy="31" r="3.5"/><circle cx="48" cy="31" r="3.5"/>',"Biceps":'<rect x="9" y="35" width="5" height="12" rx="2"/><rect x="46" y="35" width="5" height="12" rx="2"/>',"Triceps":'<rect x="69" y="35" width="5" height="12" rx="2"/><rect x="106" y="35" width="5" height="12" rx="2"/>',"Forearms":'<rect x="8" y="48" width="5" height="14" rx="2"/><rect x="47" y="48" width="5" height="14" rx="2"/><rect x="68" y="48" width="5" height="14" rx="2"/><rect x="107" y="48" width="5" height="14" rx="2"/>',"Abs":'<rect x="25" y="40" width="10" height="18" rx="2"/>',"Obliques":'<rect x="19" y="42" width="5" height="14" rx="2"/><rect x="36" y="42" width="5" height="14" rx="2"/>',"Hip Flexors":'<rect x="23" y="58" width="14" height="5" rx="2"/>',"Quadriceps":'<rect x="20" y="64" width="9" height="28" rx="3"/><rect x="31" y="64" width="9" height="28" rx="3"/>',"Adductors":'<rect x="28" y="66" width="4" height="20" rx="2"/>',"Traps":'<path d="M82 24H98L94 36H86Z"/>',"Rhomboids":'<rect x="83" y="37" width="14" height="9" rx="2"/>',"Mid Back":'<rect x="82" y="37" width="16" height="11" rx="2"/>',"Lats":'<path d="M78 37L84 41L86 56L80 52Z"/><path d="M102 37L96 41L94 56L100 52Z"/>',"Rear Delts":'<circle cx="76" cy="28" r="4.5"/><circle cx="104" cy="28" r="4.5"/>',"Lower Back":'<rect x="84" y="49" width="12" height="9" rx="2"/>',"Glutes":'<rect x="80" y="59" width="9.5" height="9" rx="4"/><rect x="90.5" y="59" width="9.5" height="9" rx="4"/>',"Hamstrings":'<rect x="80" y="69" width="9" height="23" rx="3"/><rect x="91" y="69" width="9" height="23" rx="3"/>',"Calves":'<rect x="80" y="94" width="8" height="21" rx="3"/><rect x="92" y="94" width="8" height="21" rx="3"/>'};
 const _H=p=>`<path d='${p}'/><path transform='translate(60 0) scale(-1 1)' d='${p}'/>`;
-const _P={ch:'M30 27Q22 26 17 29Q15 36 19 40Q26 42 30 40Z',up:'M30 25Q23 24 18 27L19 31Q25 28 30 29Z',fd:'M17 28Q12 28 11 34Q12 38 16 37Q18 33 17 28Z',sd:'M11 30Q8 32 9 38L11 40Q12 35 11 30Z',bi:'M12 38Q9 40 9 46L11 51Q14 48 15 43Q15 40 12 38Z',fa:'M9 52L7 63L10 64L13 53Z',ab:'M29 41h-5v5h5zM29 47.5h-5v5h5zM29 54h-5v6h5z',ob:'M23 41Q19 46 20 58L23 59Q22 50 24 41Z',hf:'M23 61L29 62L29 66L22 65Z',qu:'M21 66Q19 78 21 92L28 92Q30 78 29 66Z',ad:'M29 68L30 68L30 88L28 88Z',tr:'M30 20L22 23L18 28L24 32L30 38Z',rh:'M30 33L24 33L23 42L30 44Z',la:'M19 38Q21 46 23 57L30 61L30 45L24 43Q22 41 19 38Z',lb:'M30 52L24 55L25 62L30 62Z',gl:'M30 62L21 63Q19 70 24 74Q29 74 30 70Z',ha:'M21 75Q19 88 22 100L28 100Q30 88 30 75Z',ca:'M22 102Q20 108 22 114L28 114Q29 108 28 102Z'};
+const _P={ch:'M30 25Q22 23 15 27Q14 34 18 39Q25 42 30 39Z',up:'M30 24Q22 22 15 26L17 31Q24 28 30 30Z',fd:'M14 24Q9 25 8 32Q9 37 13 37Q15 31 14 24Z',sd:'M8 30Q6 35 7 41Q9 43 11 40Q10 35 8 30Z',bi:'M11 38Q8 42 8 49Q9 53 12 52Q14 46 13 40Z',fa:'M8 53Q6 60 5 69L8 70Q11 62 12 54Z',ab:'M29 41h-5v5h5zM29 47.5h-5.2v5h5.2zM29 54h-5.5v6h5.5z',ob:'M23 41Q18 46 18 56L21 60Q21 50 23.5 41Z',hf:'M22 61L29 63L29 67L20 65Z',qu:'M19.5 66Q16 78 19 91L26.5 91Q28.5 80 29.5 67Q24 64 19.5 66Z',ad:'M29 68L27.5 82L29.5 82Z',tr:'M30 16L26 17Q20 21 15 25L22 33L30 42Z',rh:'M30 34L23 34L22 42L30 46Z',la:'M21 33Q16 40 17 50L21 56L30 60L30 44Q25 41 21 33Z',lb:'M30 50L25 52Q24 58 26 63L30 64Z',gl:'M30 62Q22 61 19 66Q18 73 24 76Q29 76 30 70Z',ha:'M19.5 77Q16.5 88 19.5 99L27 99Q29 88 29.5 77Q24 75 19.5 77Z',ca:'M19.5 100Q17 107 20 113L23 113Q25 107 24 100ZM25 100Q25 107 26 113L28 112Q29 106 29 100Z'};
+const _P_old={ch:'M30 27Q22 26 17 29Q15 36 19 40Q26 42 30 40Z',up:'M30 25Q23 24 18 27L19 31Q25 28 30 29Z',fd:'M17 28Q12 28 11 34Q12 38 16 37Q18 33 17 28Z',sd:'M11 30Q8 32 9 38L11 40Q12 35 11 30Z',bi:'M12 38Q9 40 9 46L11 51Q14 48 15 43Q15 40 12 38Z',fa:'M9 52L7 63L10 64L13 53Z',ab:'M29 41h-5v5h5zM29 47.5h-5v5h5zM29 54h-5v6h5z',ob:'M23 41Q19 46 20 58L23 59Q22 50 24 41Z',hf:'M23 61L29 62L29 66L22 65Z',qu:'M21 66Q19 78 21 92L28 92Q30 78 29 66Z',ad:'M29 68L30 68L30 88L28 88Z',tr:'M30 20L22 23L18 28L24 32L30 38Z',rh:'M30 33L24 33L23 42L30 44Z',la:'M19 38Q21 46 23 57L30 61L30 45L24 43Q22 41 19 38Z',lb:'M30 52L24 55L25 62L30 62Z',gl:'M30 62L21 63Q19 70 24 74Q29 74 30 70Z',ha:'M21 75Q19 88 22 100L28 100Q30 88 30 75Z',ca:'M22 102Q20 108 22 114L28 114Q29 108 28 102Z'};
 const _B=(a,b)=>[a?_H(_P[a]):'',b?_H(_P[b]):''];
 const BM={'Chest':_B('ch'),'Upper Chest':_B('up'),'Front Delts':_B('fd'),'Side Delts':_B('sd','sd'),'Rear Delts':_B('','fd'),'Biceps':_B('bi'),'Triceps':_B('','bi'),'Forearms':_B('fa','fa'),'Abs':_B('ab'),'Obliques':_B('ob','ob'),'Hip Flexors':_B('hf'),'Quadriceps':_B('qu'),'Adductors':_B('ad'),'Traps':_B('','tr'),'Rhomboids':_B('','rh'),'Mid Back':_B('','rh'),'Lats':_B('','la'),'Lower Back':_B('','lb'),'Glutes':_B('','gl'),'Hamstrings':_B('','ha'),'Calves':_B('','ca')};
 BM.Core=[BM.Abs[0]+BM.Obliques[0],BM.Abs[1]+BM.Obliques[1]];
-const _body='M30 17L25 19Q16 22 12 30L9 46L6 62L8 65L12 64L15 54L18 44L19 56L20 64L19 84L19 102L20 115L29 115L29 100L30 84Z';
-const BASE=`<g fill='var(--ln)'><circle cx='30' cy='10' r='6.5'/><circle cx='90' cy='10' r='6.5'/>${_H(_body)}<g transform='translate(60 0)'>${_H(_body)}</g></g>`;
+const _body='M30 15L26 15L25 19Q18 21 13 25Q9 27 8 33L6 46Q5 52 5 56L3 68Q2 72 4 74L8 73L9 68L12 56L13 48Q15 40 14 38L17 50Q19 58 18 64Q16 72 17 82L18 92Q17 100 18 106L19 114L21 117L28 117L28 108Q27 100 27 92L28 78L30 66Z';
+const _body_old='M30 17L25 19Q16 22 12 30L9 46L6 62L8 65L12 64L15 54L18 44L19 56L20 64L19 84L19 102L20 115L29 115L29 100L30 84Z';
+const BASE=`<g fill='var(--ln)' stroke='var(--sub)' stroke-opacity='.4' stroke-width='.5'><circle cx='30' cy='10' r='6.5'/><circle cx='90' cy='10' r='6.5'/>${_H(_body)}<g transform='translate(60 0)'>${_H(_body)}</g></g>`;
 const bmap=(x,w=64)=>{const g=(m,o)=>BM[m]?`<g fill='var(--ac)' opacity='${o}'>${BM[m][0]}<g transform='translate(60 0)'>${BM[m][1]}</g></g>`:'';return `<svg viewBox='0 0 120 118' width='${w}' height='${Math.round(w*118/120)}' style='flex:none'>${BASE}${(x.sec||[]).map(m=>g(m,.4)).join('')}${g(x.muscle,1)}</svg>`};
 const HT={'Bench Press':`Lie on the bench, eyes under the bar, feet flat, shoulder blades pinched back.|Unrack and lower the bar to mid-chest with elbows about 45-75 degrees from your body.|Press up and slightly back until your arms are straight.`,'Incline Dumbbell Press':`Set the bench to 30-45 degrees and hold dumbbells at chest level.|Press up until arms are straight, bringing the weights together over your upper chest.|Lower slowly to a deep chest stretch.`,'Chest Fly':`Lie back with dumbbells (or cables) above your chest, slight elbow bend.|Open your arms wide in an arc until you feel a chest stretch.|Squeeze back together without changing the elbow angle.`,'Push-Up':`Hands just wider than shoulders, body in a straight line from head to heels.|Lower your chest to just above the floor, elbows about 45 degrees.|Push back up without sagging your hips.`,'Overhead Press':`Hold the bar at shoulder height, squeeze glutes and brace your core.|Press straight up, moving your head through once the bar passes your forehead.|Lock out overhead, then lower under control to your collarbone.`,'Lateral Raise':`Stand with light dumbbells at your sides, slight elbow bend.|Raise arms out to shoulder height, leading with the elbows.|Lower slowly; avoid swinging or shrugging.`,'Face Pull':`Set a rope at face height and pull it toward your forehead.|Flare elbows high and pull the ends apart beside your ears.|Squeeze shoulder blades together, then return slowly.`,'Rear Delt Fly':`Hinge forward with a flat back, light dumbbells hanging below you.|Raise arms out to the sides with a slight elbow bend.|Squeeze the rear shoulders at the top and lower slowly.`,'Barbell Row':`Hinge at the hips with a flat back, bar hanging at arm's length.|Pull the bar to your lower ribs, driving elbows back.|Pause, then lower under control without standing up.`,'Pull-Up':`Hang from the bar with an overhand grip slightly wider than shoulders.|Pull your chest toward the bar by driving elbows down.|Lower to a full hang each rep.`,'Lat Pulldown':`Sit with thighs under the pads, grip slightly wider than shoulders.|Lean back slightly and pull the bar to your upper chest.|Control the bar back up until arms are straight.`,'Seated Cable Row':`Sit tall with knees slightly bent and chest up.|Pull the handle to your stomach, squeezing shoulder blades together.|Return slowly without rounding your back.`,'Deadlift':`Stand with the bar over mid-foot, grip just outside your legs, chest up, back flat.|Push the floor away, keeping the bar close to your legs.|Lock hips and knees together at the top, then lower with control.`,'Squat':`Bar on upper back, feet shoulder-width, toes slightly out, brace your core.|Sit down and back, keeping knees tracking over toes.|Descend to at least parallel, then drive up through mid-foot.`,'Front Squat':`Rest the bar on your front shoulders with elbows high.|Squat down keeping your torso upright.|Drive up while keeping your elbows lifted.`,'Leg Press':`Sit with your back flat and feet shoulder-width on the platform.|Lower until knees reach about 90 degrees without your lower back lifting.|Press up without slamming your knees into lockout.`,'Romanian Deadlift':`Stand holding the bar with soft knees.|Push hips straight back, sliding the bar down your thighs.|Lower to a hamstring stretch, then drive hips forward to stand.`,'Lunge':`Step forward and lower until both knees are about 90 degrees.|Keep your torso upright and front knee over the foot.|Push through the front heel to return.`,'Leg Extension':`Adjust the pad to sit above your ankles and align knees with the pivot.|Extend your legs until straight, squeezing your quads.|Lower slowly.`,'Leg Curl':`Set the pad just above your heels.|Curl your heels toward your glutes.|Pause, then lower slowly.`,'Calf Raise':`Balls of feet on the platform, heels hanging off.|Rise as high as possible onto your toes.|Pause, then lower to a deep stretch.`,'Hip Thrust':`Upper back on a bench, bar over your hips, feet flat.|Drive through your heels until hips are fully extended.|Squeeze glutes at the top, then lower.`,'Bicep Curl':`Stand with dumbbells at your sides, palms forward.|Curl up keeping elbows pinned to your sides.|Lower slowly to full extension.`,'Hammer Curl':`Hold dumbbells with palms facing each other.|Curl up without rotating your wrists.|Lower under control.`,'Tricep Pushdown':`Stand at a cable with elbows tucked to your sides.|Press the handle down until arms are straight.|Return slowly without letting elbows drift forward.`,'Skull Crusher':`Lie back holding a bar or dumbbells over your chest, arms straight.|Bend only at the elbows to lower toward your forehead.|Extend back up, keeping upper arms still.`,'Dip':`Support yourself on parallel bars, arms straight.|Lower until upper arms are about parallel to the floor.|Press back up; lean forward for more chest, stay upright for triceps.`,'Plank':`Forearms on the floor, elbows under shoulders.|Keep a straight line from head to heels, squeezing abs and glutes.|Hold without letting your hips sag.`,'Cable Crunch':`Kneel at a cable with the rope by your head.|Curl your ribs toward your hips, rounding your spine.|Return slowly.`,'Hanging Leg Raise':`Hang from a bar with arms straight.|Raise your legs (knees bent or straight) by curling your pelvis up.|Lower slowly without swinging.`};
-function vInfo(){const x=all().find(y=>y.name===ui.info);if(!x)return'';const st=(HT[x.name]||(x.brand?MT:'')).split('|').filter(Boolean);return `<div class='modal'><div class='sheet'><div class='row sp' style='margin:0 0 8px'><div><b style='font-size:18px'>${esc(x.name)}</b><div class='sub'>${esc(x.brand||'')}</div></div><button class='ghost' data-a='closeinfo'>Close</button></div><div style='display:flex;gap:12px;align-items:center'>${bmap(x,120)}<div class='sub'><b style='color:var(--ac)'>Primary</b><br>${esc(x.muscle)}<br><br><b>Secondary</b><br>${esc((x.sec||[]).join(', ')||'-')}</div></div><h3>Your records</h3>${vRec(x.name)}<h3>How to</h3>${st.length?`<ol style='padding-left:20px;margin:0'>${st.map(s=>`<li style='margin-bottom:6px'>${esc(s)}</li>`).join('')}</ol>`:`<p class='sub'>No instructions for custom exercises.</p>`}</div></div>`}
+function vCE(){return `<button class="big ghost" data-a="cnew" style="margin-bottom:12px">+ New exercise</button>`}
+function vCEm(){const c=ui.ce;const chip=(m,on,dis,a)=>`<span class="chip ${on?'on':''} ${dis?'dis':''}" data-a="${a}" data-v="${esc(m)}">${on?'✓ ':''}${esc(m)}</span>`;return `<div class="modal"><div class="sheet"><div class="card"><b>${c.o?'Edit exercise':'New exercise'}</b><input data-cn placeholder="Exercise name" value="${esc(c.name)}" style="margin-top:8px"><div class="sub" style="margin:10px 0 4px">Primary muscle (pick one)</div><div class="chips">${MG.map(m=>chip(m,c.m===m,0,'cm')).join('')}</div><div class="sub" style="margin:10px 0 4px">Secondary muscles (tick any)</div><div class="chips">${MG.map(m=>chip(m,c.s.includes(m),c.m===m,'cs')).join('')}</div>${ui.err?`<div class="sub" style="color:#e03131;margin-top:8px">${esc(ui.err)}</div>`:''}<div class="row"><button data-a="csave">Save</button><button class="ghost" data-a="cx">Cancel</button></div></div></div></div>`}
+function renameEx(o,n){S.workouts.forEach(w=>w.ex.forEach(e=>{if(e.n===o)e.n=n}));S.routines.forEach(r=>{r.ex=r.ex.map(x=>typeof x==='string'?(x===o?n:x):(x.n===o?{...x,n}:x))});if(S.active)S.active.ex.forEach(e=>{if(e.n===o)e.n=n})}
+function vSt(){const[i,j]=ui.st,s=S.active&&S.active.ex[i]&&S.active.ex[i].sets[j];if(!s)return'';const o=[['','Normal set','1'],['w','Warm-up set','W'],['d','Drop set','D'],['f','Failure set','F']],cl={w:'#e0a100',d:'#1c7ed6',f:'#e03131'};return `<div class='modal'><div class='sheet'><div class='row sp' style='margin:0 0 8px'><b>Set type</b><button class='ghost' data-a='stx'>Close</button></div>${o.map(([k,l,c])=>`<div class='item' data-a='sett' data-v='${k}'><span><b style='color:${cl[k]||'var(--sub)'};display:inline-block;width:28px'>${c}</b>${l}</span>${(s.t||'')===k?'<span>✓</span>':''}</div>`).join('')}</div></div>`}
+function vInfo(){const x=all().find(y=>y.name===ui.info);if(!x)return'';const st=(HT[x.name]||(x.brand?MT:'')).split('|').filter(Boolean);return `<div class='modal'><div class='sheet'><div class='row sp' style='margin:0 0 8px'><div><b style='font-size:18px'>${esc(x.name)}</b><div class='sub'>${esc(x.brand||'')}</div></div><button class='ghost' data-a='closeinfo'>Close</button></div><div style='display:flex;gap:12px;align-items:center'>${bmap(x,120)}<div class='sub'><b style='color:var(--ac)'>Primary</b><br>${esc(x.muscle)}<br><br><b>Secondary</b><br>${esc((x.sec||[]).join(', ')||'-')}</div></div>${S.custom.some(c=>c.name===x.name)?`<div class='row'><button class='ghost' data-a='cedit' data-n='${esc(x.name)}'>Edit exercise</button></div>`:''}<h3>Your records</h3>${vRec(x.name)}<h3>How to</h3>${st.length?`<ol style='padding-left:20px;margin:0'>${st.map(s=>`<li style='margin-bottom:6px'>${esc(s)}</li>`).join('')}</ol>`:`<p class='sub'>No instructions for custom exercises.</p>`}</div></div>`}
 const BASE_old='<g fill="var(--ln)"><circle cx="30" cy="12" r="7"/><circle cx="90" cy="12" r="7"/><rect x="18" y="24" width="24" height="40" rx="7"/><rect x="78" y="24" width="24" height="40" rx="7"/><rect x="8" y="30" width="6" height="34" rx="3"/><rect x="46" y="30" width="6" height="34" rx="3"/><rect x="68" y="30" width="6" height="34" rx="3"/><rect x="106" y="30" width="6" height="34" rx="3"/><rect x="20" y="62" width="9" height="54" rx="4"/><rect x="31" y="62" width="9" height="54" rx="4"/><rect x="80" y="62" width="9" height="54" rx="4"/><rect x="91" y="62" width="9" height="54" rx="4"/></g>';
 const bmap_old=(x,w=64)=>`<svg viewBox="0 0 120 118" width="${w}" height="${Math.round(w*118/120)}" style="flex:none">${BASE}${(x.sec||[]).map(m=>BM[m]?`<g fill="var(--ac)" opacity=".4">${BM[m]}</g>`:'').join('')}${BM[x.muscle]?`<g fill="var(--ac)">${BM[x.muscle]}</g>`:''}</svg>`;
 const bmOf=n=>{const x=all().find(y=>y.name===n);return x?bmap(x):''};
-const MOV={cp:'Chest/Triceps/Front Delts',ip:'Upper Chest/Front Delts/Triceps',sp:'Front Delts/Triceps/Side Delts/Upper Chest',fl:'Chest/Front Delts',lr:'Side Delts/Traps',pu:'Lats/Chest/Triceps',dp:'Triceps/Chest/Front Delts',bc:'Biceps/Forearms',tx:'Triceps',rw:'Mid Back/Lats/Biceps/Rear Delts',hr:'Lats/Rhomboids/Biceps/Rear Delts',pd:'Lats/Biceps/Rear Delts',cb:'Chest/Lats/Triceps/Biceps',sh:'Traps/Forearms',lp:'Quadriceps/Glutes/Adductors',sq:'Quadriceps/Glutes/Adductors/Lower Back',le:'Quadriceps',lc:'Hamstrings/Calves',gl:'Glutes/Hamstrings/Adductors',cf:'Calves',ab:'Abs/Obliques',ob:'Obliques/Abs',bk:'Lower Back/Glutes/Hamstrings',ha:'Glutes',hd:'Adductors',ti:'Tibialis',nh:'Hamstrings/Glutes',sm:'Quadriceps/Glutes/Adductors',gp:'Glutes/Quadriceps/Adductors',rl:'Glutes/Quadriceps/Hamstrings/Adductors',dl:'Glutes/Hamstrings/Lower Back',rv:'Lats/Mid Back/Biceps/Rear Delts',rwd:'Mid Back/Traps/Rear Delts/Lats/Biceps'};
+const MOV={cp:'Chest/Triceps/Front Delts',ip:'Upper Chest/Front Delts/Triceps',sp:'Front Delts/Triceps/Side Delts/Upper Chest',fl:'Chest/Front Delts',lr:'Side Delts/Traps',pu:'Lats/Chest/Triceps',dp:'Triceps/Chest/Front Delts',bc:'Biceps/Forearms',tx:'Triceps',rw:'Mid Back/Lats/Biceps/Rear Delts',hr:'Lats/Rhomboids/Biceps/Rear Delts',pd:'Lats/Biceps/Rear Delts',cb:'Chest/Lats/Triceps/Biceps',sh:'Traps/Forearms',lp:'Quadriceps/Glutes/Adductors',sq:'Quadriceps/Glutes/Adductors/Lower Back',le:'Quadriceps',lc:'Hamstrings/Calves',gl:'Glutes/Hamstrings/Adductors',cf:'Calves',ab:'Abs/Obliques',ob:'Obliques/Abs',bk:'Lower Back/Glutes/Hamstrings',ha:'Glutes',hd:'Adductors',ti:'Tibialis',nh:'Hamstrings/Glutes',sm:'Quadriceps/Glutes/Adductors',gp:'Glutes/Quadriceps/Adductors',rl:'Glutes/Quadriceps/Hamstrings/Adductors',dl:'Glutes/Hamstrings/Lower Back',rv:'Lats/Mid Back/Biceps/Rear Delts',rwd:'Mid Back/Traps/Rear Delts/Lats/Biceps',vk:'Front Delts/Upper Chest/Triceps',uf:'Upper Chest/Front Delts',po:'Lats/Chest/Traps',rd:'Rear Delts/Mid Back/Traps'};
 const IC={cp:'press',ip:'press',sp:'press',fl:'press',lr:'press',dp:'press',tx:'press',rw:'pull',hr:'pull',pd:'pull',pu:'pull',cb:'pull',sh:'pull',lp:'legpress',sq:'legpress',sm:'legpress',gp:'legpress',rl:'legpress',le:'seat',lc:'seat',ha:'seat',hd:'seat',ti:'seat',nh:'seat',cf:'seat',gl:'glute',bk:'glute',dl:'glute',ab:'core',ob:'core',bc:'curl'};
 const ICON={press:`<path d='M8 42h32M13 40V19M12 32h14v8M16 21l18-5'/><circle cx='36' cy='15.5' r='2.5' stroke='var(--ac)'/>`,pull:`<path d='M8 42h32M16 42V32h12v10M22 32v-8M12 8h24M16 8l6 16M32 8l-6 16'/><rect x='20' y='3' width='8' height='5' stroke='var(--ac)'/>`,legpress:`<path d='M6 42h36M10 40l24-24M30 12l8 8M14 32l-5 10'/><rect x='34' y='14' width='6' height='10' stroke='var(--ac)' transform='rotate(45 37 19)'/>`,seat:`<path d='M8 42h30M14 42V24h14v8M14 24V10M28 32l10 8'/><circle cx='39' cy='41' r='2.5' stroke='var(--ac)'/>`,glute:`<path d='M6 42h36M8 36h14v6M22 34l14-10'/><rect x='34' y='18' width='8' height='6' stroke='var(--ac)' transform='rotate(-35 38 21)'/>`,core:`<path d='M8 42h32M14 40l5-22 6-2M19 18c4-6 10-6 12 0M31 18v12'/><circle cx='31' cy='32' r='2.5' stroke='var(--ac)'/>`,curl:`<path d='M8 42h32M17 42V28h9v14M26 28l9-9M35 19l4 7'/><circle cx='39' cy='27' r='2.5' stroke='var(--ac)'/>`,free:`<path d='M10 24h28M10 17v14M16 15v18M32 15v18M38 17v14'/>`};
 const mic=(x,w=44)=>`<svg viewBox='0 0 48 48' width='${w}' height='${w}' style='flex:none;color:var(--tx)' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>${ICON[x.ic]||ICON.free}</svg>`;
@@ -79,7 +90,10 @@ const EXT=[..._EX('HS Plate','Hammer Strength Plate-Loaded','Iso-Lateral Bench P
 ..._EX('HS MTS','Hammer Strength MTS (Motion Technology Selectorized)','Iso-Lateral Chest Press:cp,Iso-Lateral Incline Press:ip,Iso-Lateral Decline Press:cp,Iso-Lateral Shoulder Press:sp,Iso-Lateral Row:rw,Iso-Lateral High Row:hr,Iso-Lateral Front Pulldown:pd,Iso-Lateral Biceps Curl:bc,Iso-Lateral Triceps Extension:tx,Iso-Lateral Leg Extension:le,Iso-Lateral Kneeling Leg Curl:lc,Abdominal Crunch:ab'),
 ..._EX('LF Insignia','Life Fitness Insignia Series','Chest Press:cp,Dual Axis Chest Press:cp,Pectoral Fly/Rear Deltoid:fl,Shoulder Press:sp,Lateral Raise:lr,Pulldown:pd,Dual Axis Pulldown:pd,Row:rw,Biceps Curl:bc,Triceps Extension:tx,Triceps Press:tx,Assist Dip Chin:pd,Abdominal:ab,Abdominal Advanced:ab,Torso Rotation:ob,Back Extension:bk,Arc Leg Press:lp,Leg Extension:le,Leg Curl:lc,Seated Leg Curl:lc,Calf Extension:cf,Glute:gl,Glute Bridge:gl,Hip Abductor:ha,Hip Adductor:hd,Hip Adduction:hd'),
 ..._EX('Booty Builder','Booty Builder','Platinum V4 Hip Thrust:gl,V8 Hip Thrust:gl,Dual Hip Thrust:gl,Standing Hip Thrust:gl,Selectorized Standing Hip Thrust:gl,Standing Hip Abductor:ha,Selectorized Standing Hip Abductor:ha,3D Multi Abductor:ha,Dual Hip Abductor:ha,Standing Adductor:hd,Pendulum Hip Press:gp,V Squat:sq,Belt Squat:sq,Reverse Lunge:rl,Split Squat and Deadlift:rl,Deadlift:dl,Selectorized Back Extension:bk'),
-..._EX('Panatta','Panatta','French Press Machine:tx,Standing Multi Flight Lateral Raise:lr,Chest-Supported T-Bar Row:rw')];
+..._EX('Panatta','Panatta','French Press Machine:tx,Standing Multi Flight Lateral Raise:lr,Chest-Supported T-Bar Row:rw'),
+..._EX('Gymleco','Gymleco Plate-Loaded','Chest-Supported Incline T-Bar Row:rv'),
+..._EX('Panatta','Panatta','Vertical Chest Press:cp,Super Vertical Chest Press:cp,Vertical Chest Press Circular:cp,Inclined Chest Press:ip,Inclined Chest Press Circular:ip,Super Inclined Chest Press:ip,Declined Chest Press:cp,Super Declined Chest Press:cp,Super Horizontal Bench Press:cp,Super Inclined Bench Press:ip,Multi Press:cp,Super Horizontal Multi Press:cp,Super Vertical Multi Press:cp,Middle Chest Flight Machine:fl,Super Middle Chest Flight Machine:fl,Super Upper Chest Flight Machine:uf,Super Lower Chest Flight Machine:fl,Pectoral Machine:fl,Dips Press:dp,Pullover Machine:po,Super Pullover Machine:po,Deltoid Press:sp,Super Deltoid Press:sp,Deltoid Press Convergent:sp,Deltoid Press Circular:sp,Viking Press:vk,Military Bench:sp,Lateral Deltoids:lr,Back Deltoids:rd,Shrug Machine:sh,Super Shrug Machine:sh,High Row:hr,Super High Row:hr,High Row Convergent:hr,Low Row:rw,Super Low Row:rw,Power Row:rw,Super Power Row:rw,Rowing Machine:rw,Super Rowing:rw,Super Rowing Circular:rw,Pulley Row:rw,Adjustable Row 45 Degrees:rw,Seal Row Bench:rw,Lat Machine Convergent:pd,Super Lat Machine Convergent:pd,Lat Pulldown:pd,Lat Pulldown Circular:pd,Super Lat Pulldown Circular:pd')];
+HT['Chest-Supported Incline T-Bar Row (Gymleco)']=`Load plates on the lever and settle in with your chest against the incline pad, feet planted, and the handles within easy reach.|Pull the handles toward your lower chest and upper abdomen, driving your elbows back and squeezing your shoulder blades together.|Lower slowly to a full stretch without letting the plates crash.`;
 HT['French Press Machine (Panatta)']=`Set the seat height so your arms are extended overhead with your elbows lined up with the machine's pivot.|Press the handles up by extending your elbows, keeping your upper arms still. Use the rotating handle for a narrow or wide grip.|Lower slowly to a deep stretch of the triceps and repeat.`;
 HT['Standing Multi Flight Lateral Raise (Panatta)']=`Adjust the starting angle so the handles begin low at your sides, then stand tall with your core braced.|Raise your arms out to the side to about shoulder height, leading with the elbows.|Lower slowly under control without swinging your torso.`;
 const VAR=('Seated Cable Row - V-Grip:rv,Seated Cable Row - Wide Grip:rwd,Cable Bicep Curl:bc,Cable Hammer Curl:bc,Single Arm Cable Bicep Curl:bc,Tricep Pushdown - Rope:tx,Tricep Pushdown - V-Grip:tx,Cable Tricep Extension:tx,Single Arm Cable Tricep Extension:tx').split(',').map(p=>{const[n,c]=p.split(':'),g=MOV[c].split('/');return{name:n,muscle:g[0],sec:g.slice(1)}});
@@ -98,7 +112,7 @@ const kk=x=>(x.name+' '+x.muscle+' '+(x.sec||[]).join(' ')+' '+(x.brand||'')).to
 const ml=x=>`<b style="color:var(--ac)">${esc(x.muscle)}</b>`+(x.sec&&x.sec.length?` · ${esc(x.sec.join(', '))}`:'');
 const mlOf=n=>{const x=all().find(y=>y.name===n);return x?ml(x):''};
 const LIB="Bench Press:Chest,Incline Dumbbell Press:Chest,Chest Fly:Chest,Push-Up:Chest,Overhead Press:Shoulders,Lateral Raise:Shoulders,Face Pull:Shoulders,Rear Delt Fly:Shoulders,Barbell Row:Back,Pull-Up:Back,Lat Pulldown:Back,Seated Cable Row:Back,Deadlift:Back,Squat:Legs,Front Squat:Legs,Leg Press:Legs,Romanian Deadlift:Legs,Lunge:Legs,Leg Extension:Legs,Leg Curl:Legs,Calf Raise:Legs,Hip Thrust:Glutes,Bicep Curl:Arms,Hammer Curl:Arms,Tricep Pushdown:Arms,Skull Crusher:Arms,Dip:Arms,Plank:Core,Cable Crunch:Core,Hanging Leg Raise:Core".split(",").map(x=>{const[n,m]=x.split(":"),g=(MUS[n]||m).split("/");return{name:n,muscle:g[0],sec:g.slice(1)}});
-let S={unit:'kg',restSec:90,custom:[],routines:[],workouts:[],active:null,rest:0};
+let S={unit:'kg',restSec:90,step:1.25,custom:[],routines:[],workouts:[],active:null,rest:0};
 let tab='w',ui={},uref=null,tmr;
 const all=()=>LIB.concat(VAR,EXT,S.custom).sort((a,b)=>a.name.localeCompare(b.name));
 const score=s=>s.w>0?s.w*(1+s.r/30):s.r;
@@ -106,10 +120,13 @@ const best=ss=>Math.max(0,...ss.filter(s=>s.t!=='w').map(score));
 const vol=ss=>ss.filter(s=>s.t!=='w').reduce((t,s)=>t+(+s.w||0)*(+s.r||0),0);
 const fd=d=>new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'short'});
 const fdur=ms=>{const m=Math.round(ms/60000);return m>=60?Math.floor(m/60)+'h '+m%60+'m':m+'m'};
-const lastSets=n=>{for(let i=S.workouts.length-1;i>=0;i--){const e=S.workouts[i].ex.find(x=>x.n===n);if(e)return e.sets}return[]};
+const lastSets=n=>{for(let i=S.workouts.length-1;i>=0;i--){const e=S.workouts[i].dl?null:S.workouts[i].ex.find(x=>x.n===n);if(e)return e.sets}return[]};
 const ph=(e,j)=>lastSets(e.n)[j]||(j>0&&e.sets[j-1]&&(e.sets[j-1].w!==''||e.sets[j-1].r!=='')?e.sets[j-1]:null);
 const rx=r=>r.ex.map(x=>typeof x==='string'?{n:x,k:0}:x);
 const blank=k=>Array.from({length:k},()=>({w:'',r:'',d:false}));
+const dlW=n=>{const t=Date.now()-91*864e5,m=Math.max(0,...S.workouts.filter(w=>!w.dl&&w.date>t).flatMap(w=>w.ex.filter(e=>e.n===n).flatMap(e=>e.sets.filter(s=>s.t!=='w').map(s=>+s.w||0)))),st=S.unit==='lb'?5:2.5;return m>0?Math.round(m*.8/st)*st:0};
+const applyDl=A=>A.ex.forEach(e=>{const w=dlW(e.n);if(w)e.sets.forEach(s=>{if(s.w===''&&s.t!=='w'&&s.t!=='d'){s.w=w;s.auto=true}})});
+const clearDl=A=>A.ex.forEach(e=>e.sets.forEach(s=>{if(s.auto){s.w='';s.auto=false}}));
 const rc=ss=>{const q=ss.filter(s=>s.t!=='w'&&s.r>0);return{w:Math.max(0,...q.map(s=>s.w)),e:Math.max(0,...q.filter(s=>s.w>0).map(s=>s.w*(1+s.r/30))),v:Math.max(0,...q.map(s=>s.w*s.r))}};
 const recs=n=>rc(S.workouts.flatMap(w=>w.ex.filter(e=>e.n===n).flatMap(e=>e.sets)));
 const vRec=n=>{const r=recs(n),f=v=>v>0?Math.round(v*10)/10+' '+S.unit:'-',c=(v,l)=>`<div class='card'><b style='font-size:16px'>${f(v)}</b><span class='sub'>${l}</span></div>`;return `<div class='stats' style='margin:8px 0'>${c(r.w,'Heaviest')}${c(r.e,'Est. 1RM')}${c(r.v,'Best set vol.')}</div>`};
@@ -134,19 +151,20 @@ async function init(){
 function vWorkout(){
   const a=S.active,msg=ui.msg?`<div class="toast">${esc(ui.msg)}</div>`:'';
   if(ui.rb)return msg+vBuild();
-  if(!a)return msg+`<h2>Workout</h2><button class="big" data-a="start">+ Start empty workout</button><h3>Routines</h3><button class="ghost" data-a="rnew" style="width:100%;margin-bottom:10px;padding:14px;font-size:16px">📋 New routine</button><div class="sub" style="margin-bottom:8px">My routines (${S.routines.length})</div>`+
-    (S.routines.map((r,i)=>`<div class="card"><div class="row sp" style="margin:0"><b>${esc(r.name)}</b><button class="ghost" data-a="rmenu" data-i="${i}" style="padding:2px 12px">⋯</button></div>${ui.rm===i?`<div class="row"><button class="ghost" data-a="redit" data-i="${i}">Edit</button><button class="ghost" data-a="rdel" data-i="${i}">${ui.rd===i?'Tap again':'Delete'}</button></div>`:''}<div class="sub" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(rx(r).map(x=>x.n).join(', '))}</div><button class="big" data-a="rstart" data-i="${i}" style="margin-top:10px">Start Routine</button></div>`).join('')||'<p class="sub">No routines yet. Create one above, or tick "Save as routine" when you finish a workout.</p>');
+  if(!a)return msg+`<h2>Workout</h2><button class="big" data-a="start">+ Start empty workout</button><h3>Routines</h3><button class="ghost" data-a="rnew" style="width:100%;margin-bottom:10px;padding:14px;font-size:16px">📋 New routine</button><div class="sub" style="margin-bottom:8px">My routines (${S.routines.length}) · hold and drag a card to reorder</div>`+
+    (S.routines.map((r,i)=>`<div class="card rt" data-ri="${i}"><div class="row sp" style="margin:0"><b>${esc(r.name)}</b><button class="ghost" data-a="rmenu" data-i="${i}" style="padding:2px 12px">⋯</button></div>${ui.rm===i?`<div class="row"><button class="ghost" data-a="redit" data-i="${i}">Edit</button><button class="ghost" data-a="rdel" data-i="${i}">${ui.rd===i?'Tap again':'Delete'}</button></div>`:''}<div class="sub" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(rx(r).map(x=>x.n).join(', '))}</div><button class="big" data-a="rstart" data-i="${i}" style="margin-top:10px">Start Routine</button></div>`).join('')||'<p class="sub">No routines yet. Create one above, or tick "Save as routine" when you finish a workout.</p>');
   const v=a.ex.reduce((t,e)=>t+vol(e.sets.filter(s=>s.d)),0);
-  return `<input class="title" data-nm value="${esc(a.name)}"><div class="sub"><span id="clock"></span> · ${Math.round(v)} ${S.unit} volume</div>`+
+  return `<input class="title" data-nm value="${esc(a.name)}"><div class="sub"><span id="clock"></span> · ${Math.round(v)} ${S.unit} volume</div>${dlCard(a)}`+
   a.ex.map((e,i)=>`<div class="card"><div class="row sp" style="margin:0"><div style="display:flex;gap:10px;align-items:center">${bmOf(e.n)}<div data-a="info" data-n="${esc(e.n)}" style="cursor:pointer"><b style="color:var(--ac)">${esc(e.n)}</b><div class="sub">${mlOf(e.n)}</div></div></div><span class="row" style="margin:0"><button class="ghost" data-a="swap" data-i="${i}">⇄ Swap</button><button class="ghost" data-a="rmex" data-i="${i}">✕</button></span></div>
   <div class="set hd"><span>#</span><span>Prev</span><span>${S.unit}</span><span>Reps</span><span></span></div>`+
-  e.sets.map((s,j)=>{const p=lastSets(e.n)[j],q=ph(e,j)||{};return `<div class="set"><span data-a="wu" data-i="${i}" data-j="${j}" style="text-align:center;font-weight:700;cursor:pointer;color:${s.t==='w'?'#e0a100':'var(--sub)'}">${s.t==='w'?'W':e.sets.slice(0,j+1).filter(y=>y.t!=='w').length}</span><span class="sub">${p?p.w+'×'+p.r:'–'}</span><input inputmode="decimal" data-s="${i},${j},w" placeholder="${esc(q.w??'')}" value="${esc(s.w)}"><input inputmode="numeric" data-s="${i},${j},r" placeholder="${esc(q.r??'')}" value="${esc(s.r)}"><button class="chk ${s.d?'on':''}" data-a="chk" data-i="${i}" data-j="${j}">✓</button></div>`}).join('')+
+  e.sets.map((s,j)=>{const p=lastSets(e.n)[j],q=ph(e,j)||{};return `<div class="set ${s.d?'done':''}"><span data-a="st" data-i="${i}" data-j="${j}" style="text-align:center;font-weight:700;cursor:pointer;color:${({w:'#e0a100',d:'#1c7ed6',f:'#e03131'})[s.t]||'var(--sub)'}">${({w:'W',d:'D',f:'F'})[s.t]||e.sets.slice(0,j+1).filter(y=>!y.t).length}</span><span class="sub">${p?p.w+'×'+p.r:'–'}</span><input inputmode="none" readonly data-s="${i},${j},w" placeholder="${esc(q.w??'')}" value="${esc(s.w)}"><input inputmode="none" readonly data-s="${i},${j},r" placeholder="${esc(q.r??'')}" value="${esc(s.r)}"><button class="chk ${s.d?'on':''}" data-a="chk" data-i="${i}" data-j="${j}">✓</button></div>`}).join('')+
   `<div class="row"><button class="ghost" data-a="addset" data-i="${i}">+ Add set</button>${e.sets.length>1?`<button class="ghost" data-a="delset" data-i="${i}">− Remove last</button>`:''}</div></div>`).join('')+
   `<button class="big ghost" data-a="pick">+ Add exercise</button>
   ${rcard(a)}<label class="row sub"><input type="checkbox" data-sr style="width:auto" ${a.save?'checked':''}> Save as routine</label>
   <div class="row"><button class="big" data-a="finish">Finish workout</button></div>
   <div class="row"><button class="ghost" data-a="cancel" style="width:100%">${ui.cc?'Tap again to discard':'Discard workout'}</button></div>`;
 }
+function dlCard(a){const miss=a.dl?a.ex.filter(e=>!dlW(e.n)).length:0;return `<label class="row sub" style="margin:8px 0"><input type="checkbox" data-dl style="width:auto" ${a.dl?'checked':''}> <b style="color:var(--ac)">Deload session</b> · weights pre-filled at 80% of your heaviest in the last 3 months</label>${a.dl&&miss?`<div class="sub">${miss} exercise${miss>1?'s':''} had no history in the last 3 months and ${miss>1?'were':'was'} left blank.</div>`:''}`}
 function rcard(a){const r=a.rid&&S.routines.find(y=>y.id===a.rid);if(!r||a.ex.map(e=>e.n).join('|')===rx(r).map(x=>x.n).join('|'))return'';return `<div class="card"><b>Routine changed</b><div class="sub">You changed exercises from "${esc(r.name)}". Update it for next time?</div><div class="row"><button class="${a.upd?'ghost':''}" data-a="upd0">Keep original</button><button class="${a.upd?'':'ghost'}" data-a="upd1">Update routine</button></div></div>`}
 function vBuild(){
   const b=ui.rb;
@@ -159,15 +177,40 @@ function vPick(){
   all().map(x=>`<div class="item" data-a="add" data-n="${esc(x.name)}" data-k="${esc(kk(x))}"><div style="display:flex;gap:10px;align-items:center">${bmap(x,44)}<div>${esc(x.name)}<div class="sub">${ml(x)}</div></div></div></div>`).join('')+`</div></div>`;
 }
 function vHist(){
-  return `<h2>History</h2>`+([...S.workouts].reverse().map(w=>`<div class="card"><div class="row sp" style="margin:0"><b>${esc(w.name)}</b><span class="sub">${fd(w.date)} · ${fdur(w.dur)}</span></div>
-  <div class="sub">${Math.round(w.ex.reduce((t,e)=>t+vol(e.sets),0))} ${S.unit} total</div>`+
-  w.ex.map(e=>{const b=e.sets.reduce((m,s)=>score(s)>=score(m)?s:m,e.sets[0]);return `<div style="margin-top:6px">${e.sets.length} × ${esc(e.n)} <span class="sub">best ${b.w}×${b.r}</span></div>`}).join('')+
-  `<div class="row"><button class="ghost" data-a="hdel" data-id="${w.id}">${ui.hd===w.id?'Tap again':'Delete'}</button></div></div>`).join('')||'<p class="sub">No workouts logged yet.</p>');
+  return `<h2>History</h2>`+([...S.workouts].reverse().map(w=>{const o=ui.hx===w.id,tv=Math.round(w.ex.reduce((t,e)=>t+vol(e.sets),0));return `<div class="card" style="padding:10px 12px"><div data-a="hx" data-id="${w.id}" style="cursor:pointer"><div class="row sp" style="margin:0;flex-wrap:nowrap"><b>${esc(w.name)}${w.dl?' <span class="sub">· deload</span>':''}</b><span class="sub" style="white-space:nowrap">${fd(w.date)} · ${fdur(w.dur)} <span style="display:inline-block;width:12px;text-align:center">${o?'▴':'▾'}</span></span></div><div class="sub">${w.ex.length} exercise${w.ex.length>1?'s':''} · ${tv} ${S.unit}</div></div>`+
+  (o?w.ex.map(e=>{const b=e.sets.reduce((m,s)=>score(s)>=score(m)?s:m,e.sets[0]);return `<div style="margin-top:6px">${e.sets.length} × ${esc(e.n)} <span class="sub">best ${b.w}×${b.r}</span></div>`}).join('')+`<div class="row"><button class="ghost" data-a="hdel" data-id="${w.id}">${ui.hd===w.id?'Tap again':'Delete'}</button></div>`:'')+`</div>`}).join('')||'<p class="sub">No workouts logged yet.</p>');
+}
+function vPR(){const names=[...new Set(S.workouts.flatMap(w=>w.ex.map(e=>e.n)))].sort();return `<div class="row sp" style="margin:0 0 8px"><button class="ghost" data-a="prx">‹ Back</button></div><h2>Personal records</h2>`+(names.map(n=>`<div class="card"><b>${esc(n)}</b>${vRec(n)}</div>`).join('')||'<p class="sub">Log a workout to see records.</p>')}
+function vRep(){
+  const off=Math.min(0,ui.rmo|0),n0=new Date(),mo=(y,o)=>new Date(n0.getFullYear(),n0.getMonth()+o,1),t0=mo(0,off).getTime(),t1=mo(0,off+1).getTime(),p0=mo(0,off-1).getTime();
+  const inR=(a,b)=>S.workouts.filter(w=>w.date>=a&&w.date<b),cur=inR(t0,t1),prv=inR(p0,t0);
+  const ml2=t=>new Date(t).toLocaleDateString(undefined,{month:'long',year:'numeric'}),k1=n=>n>=1000?Math.round(n/100)/10+'k':String(Math.round(n));
+  const days=ws=>new Set(ws.map(w=>new Date(w.date).toDateString())).size;
+  const tot=ws=>({d:days(ws),n:ws.length,t:ws.reduce((t,w)=>t+(w.dur||0),0),v:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0),s:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+e.sets.filter(q=>q.t!=='w').length,0),0)});
+  const a=tot(cur),b=tot(prv);
+  const dl=(x,y,f)=>x===y?'':`<span style="color:${x>y?'var(--ok)':'#e03131'};font-size:12px">${x>y?'↑':'↓'} ${f(Math.abs(x-y))}</span>`;
+  const mt=ui.rmt||'d',MT2={d:['Days','d'],n:['Workouts','n'],t:['Duration','t'],v:['Volume','v'],s:['Sets','s']};
+  const bars=[];for(let i=-11;i<=0;i++){const o=off+i,x=tot(inR(mo(0,o).getTime(),mo(0,o+1).getTime()));bars.push({o:i,l:new Date(mo(0,o)).toLocaleDateString(undefined,{month:'short'})[0],v:x[MT2[mt][1]]})}
+  const bm=Math.max(1,...bars.map(x=>x.v)),chart=`<svg viewBox="0 0 340 150" class="chart">${bars.map((x,i)=>{const h=x.v/bm*100,bx=10+i*27;return `<rect x="${bx}" y="${120-h}" width="20" height="${h}" rx="3" fill="${x.o===0?'var(--ac)':'var(--ln)'}"/><text x="${bx+10}" y="138" font-size="10" text-anchor="middle" fill="var(--sub)">${x.l}</text>`}).join('')}</svg>`;
+  const cards=[['Days trained',a.d,dl(a.d,b.d,String)],['Workouts',a.n,dl(a.n,b.n,String)],['Duration',fdur(a.t),dl(a.t,b.t,fdur)],['Volume',k1(a.v)+' '+S.unit,dl(a.v,b.v,k1)],['Sets',k1(a.s),dl(a.s,b.s,k1)]].map(([l,v,d])=>`<div class="card" style="margin:0"><div class="sub">${l}</div><b style="font-size:20px">${v}</b><div>${d||'&nbsp;'}</div></div>`).join('');
+  const before=S.workouts.filter(w=>w.date<t0),pr=[];
+  [...new Set(cur.flatMap(w=>w.ex.map(e=>e.n)))].sort().forEach(n=>{const g=ws=>rc(ws.flatMap(w=>w.ex.filter(e=>e.n===n).flatMap(e=>e.sets))),c=g(cur),o=g(before),r=[];if(c.w>o.w&&c.w>0)r.push('Weight - '+Math.round(c.w*100)/100+' '+S.unit);if(c.e>o.e&&c.e>0)r.push('1RM - '+Math.round(c.e*100)/100+' '+S.unit);if(r.length)pr.push([n,r])});
+  const prh=pr.length?pr.map(([n,r])=>`<div class="item" style="cursor:default;display:block"><b>${esc(n)}</b>${r.map(x=>`<div class="sub">🏅 ${x}</div>`).join('')}</div>`).join(''):'<p class="sub">No new records this month.</p>';
+  const keys=Object.keys(GRP),mc=mset(cur),mp=mset(prv),gsum=m=>{const g={};keys.forEach(k=>g[k]=0);Object.entries(m).forEach(([k,v])=>{if(G2[k])g[G2[k]]+=v});return g},gc=gsum(mc),gp=gsum(mp),mx=Math.max(1,...Object.values(gc),...Object.values(gp));
+  const pt=(k,r)=>{const q=(-120+60*keys.indexOf(k))*Math.PI/180;return[160+r*Math.cos(q),150+r*Math.sin(q)]},poly=(g,c)=>`<polygon points="${keys.map(k=>pt(k,100*g[k]/mx).join(',')).join(' ')}" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="2"/>`,hex=f=>`<polygon points="${keys.map(k=>pt(k,100*f).join(',')).join(' ')}" fill="none" stroke="var(--ln)"/>`;
+  const radar=`<svg viewBox="0 0 320 300" class="chart">${[.33,.66,1].map(hex).join('')}${poly(gp,'var(--sub)')}${poly(gc,'var(--ac)')}${keys.map(k=>{const q=pt(k,122);return `<text x="${q[0]}" y="${q[1]+4}" text-anchor="middle" font-size="12" fill="var(--sub)">${k}</text>`}).join('')}</svg>`;
+  const ms=Object.entries(mc).sort((x,y)=>y[1]-x[1]),mm=ms.length?ms[0][1]:1,msh=(ui.rmm?ms:ms.slice(0,6)).map(([k,v])=>`<div class="row sp" style="margin:4px 0;flex-wrap:nowrap"><span style="width:105px">${esc(k)}</span><div style="flex:1;background:var(--ln);border-radius:6px;height:10px"><div style="width:${v/mm*100}%;background:var(--ac);height:10px;border-radius:6px"></div></div><span style="width:40px;text-align:right">${Math.round(v*10)/10}</span></div>`).join('');
+  const cnt={};cur.forEach(w=>w.ex.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1));const te=Object.entries(cnt).sort((x,y)=>y[1]-x[1]),teh=(ui.rme?te:te.slice(0,3)).map(([n,c])=>`<div class="item" style="cursor:default"><span>${esc(n)}</span><b>${c}×</b></div>`).join('');
+  const more=(l,on,act,len,lim)=>len>lim?`<button class="ghost" data-a="${act}" style="width:100%;border:0">${on?'Show less':'See '+(len-lim)+' more'}</button>`:'';
+  return `<div class="row sp" style="margin:0 0 8px"><button class="ghost" data-a="repx">‹ Back</button></div><div class="row sp" style="margin:0"><button class="ghost" data-a="rmo" data-v="-1">‹</button><h2 style="margin:0">${ml2(t0)}</h2><button class="ghost" data-a="rmo" data-v="1" ${off>=0?'disabled style="opacity:.3"':''}>›</button></div><div style="font-size:30px;font-weight:700;margin-top:10px">${a.d} <span class="sub" style="font-size:16px;font-weight:400">days trained</span> ${dl(a.d,b.d,String)}</div>${cur.length?'':'<p class="sub">No workouts logged this month.</p>'}${chart}${chips([['d','Days'],['n','Workouts'],['t','Duration'],['v','Volume'],['s','Sets']],mt,'rmt')}<h3>Summary</h3><div class="stats" style="grid-template-columns:1fr 1fr">${cards}</div><h3>Personal records</h3><div class="card" style="padding:4px 12px"><div style="text-align:center;font-weight:700;padding:8px">🏅 ${pr.length} new PR${pr.length===1?'':'s'}</div>${prh}</div><h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> ${ml2(t0)} &nbsp; <span>●</span> ${ml2(p0)}</div><h3>Main muscle groups</h3><div class="card">${msh||'<p class="sub">No sets logged.</p>'}${more('',ui.rmm,'rmm',ms.length,6)}</div><h3>Top exercises</h3><div class="card" style="padding:0 12px">${teh||'<p class="sub" style="padding:12px 0">Nothing logged.</p>'}${more('',ui.rme,'rme',te.length,3)}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded. Arrows compare with the previous month.</p>`;
 }
 function vStats(){
+  if(ui.rep)return vRep();
+  if(ui.pr)return vPR();
   const names=[...new Set(S.workouts.flatMap(w=>w.ex.map(e=>e.n)))].sort();
   const wk=Date.now()-7*864e5,wks=S.workouts.filter(w=>w.date>wk);
-  let h=`<h2>Stats</h2><div class="stats"><div class="card"><b>${S.workouts.length}</b><span class="sub">workouts</span></div><div class="card"><b>${wks.length}</b><span class="sub">this week</span></div><div class="card"><b>${Math.round(wks.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0)/1000*10)/10}k</b><span class="sub">${S.unit} lifted</span></div></div>`;
+  if(ui.sv==='m')return vMuscles();
+  let h=`<h2>Stats</h2>${svTabs()}<div class="stats"><div class="card"><b>${S.workouts.length}</b><span class="sub">workouts</span></div><div class="card"><b>${wks.length}</b><span class="sub">this week</span></div><div class="card"><b>${Math.round(wks.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0)/1000*10)/10}k</b><span class="sub">${S.unit} lifted</span></div></div>`;
   if(!names.length)return h+'<p class="sub">Log a workout to see progress charts.</p>';
   const mc={};wks.forEach(w=>w.ex.forEach(e=>{const x=all().find(y=>y.name===e.n);if(!x)return;const n=e.sets.filter(s=>s.t!=='w').length;mc[x.muscle]=(mc[x.muscle]||0)+n;(x.sec||[]).forEach(s=>mc[s]=(mc[s]||0)+n/2)}));
   const mm=Math.max(1,...Object.values(mc));
@@ -181,22 +224,54 @@ function vStats(){
   const d0=raw.length?raw[0].d:0,d1=raw.length?raw[raw.length-1].d:1,xy=raw.map(a=>[p+(d1>d0?(a.d-d0)/(d1-d0):.5)*(W-2*p),H-p-(mx===mn?.5:(a.y-mn)/(mx-mn))*(H-2*p)]);
   h+=`<h3>Progress</h3><select data-sel>${names.map(n=>`<option ${n===sel?'selected':''}>${esc(n)}</option>`).join('')}</select><div class="row">${[['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']].map(([k,l])=>`<button class="${rg===k?'':'ghost'}" data-a="rg" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div class="row">${[['e','Est. 1RM'],['w','Heaviest'],['v','Set volume'],['r','Max reps']].map(([k,l])=>`<button class="${mt===k?'':'ghost'}" data-a="mt" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div style="height:8px"></div>
   <svg class="chart" viewBox="0 0 ${W} ${H}"><polyline points="${xy.map(a=>a.join(',')).join(' ')}" fill="none" stroke="var(--ac)" stroke-width="2"/>${xy.map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="3.5" fill="var(--ac)"/>`).join('')}</svg>
-  <div class="row sp sub" style="margin:2px 2px 0"><span>${pts.length?fd(d0):''}</span><span>${pts.length?fd(d1):''}</span></div><p class="sub">${pts.length?`${{e:'Estimated 1RM (Epley)',w:'Heaviest set',v:'Best set volume',r:'Most reps in a set'}[mt]} per session · ${pts.length} session${pts.length>1?'s':''} · low ${Math.round(mn*10)/10}, high ${Math.round(mx*10)/10} ${mt==='r'?'reps':S.unit}`:'No sessions of this exercise in this range.'}</p><h3>Personal records</h3>`;
-  return h+names.map(n=>`<div class="card"><b>${esc(n)}</b>${vRec(n)}</div>`).join('');
+  <div class="row sp sub" style="margin:2px 2px 0"><span>${pts.length?fd(d0):''}</span><span>${pts.length?fd(d1):''}</span></div><p class="sub">${pts.length?`${{e:'Estimated 1RM (Epley)',w:'Heaviest set',v:'Best set volume',r:'Most reps in a set'}[mt]} per session · ${pts.length} session${pts.length>1?'s':''} · low ${Math.round(mn*10)/10}, high ${Math.round(mx*10)/10} ${mt==='r'?'reps':S.unit}`:'No sessions of this exercise in this range.'}</p>`;
+  return h+`<button class="big ghost" data-a="rep" style="margin-top:16px">📅 Monthly report ›</button><button class="big ghost" data-a="prs" style="margin-top:8px">🏆 Personal records (${names.length}) ›</button>`;
+}
+const GRP={Back:'Lats,Mid Back,Lower Back,Traps,Rhomboids',Chest:'Chest,Upper Chest',Core:'Abs,Obliques,Core,Hip Flexors',Shoulders:'Front Delts,Side Delts,Rear Delts',Arms:'Biceps,Triceps,Forearms',Legs:'Quadriceps,Hamstrings,Glutes,Adductors,Calves,Tibialis'},G2={};
+Object.entries(GRP).forEach(([g,m])=>m.split(',').forEach(x=>G2[x]=g));
+const mset=ws=>{const r={};ws.forEach(w=>w.ex.forEach(e=>{const x=all().find(y=>y.name===e.n);if(!x)return;const n=e.sets.filter(s=>s.t!=='w').length;r[x.muscle]=(r[x.muscle]||0)+n;(x.sec||[]).forEach(m=>r[m]=(r[m]||0)+n/2)}));return r};
+const RGN={'30d':30,'3m':91,'1y':365,all:0};
+const svTabs=()=>`<div class="row">${[['p','Progress'],['m','Muscles']].map(([k,l])=>`<button class="${(ui.sv||'p')===k?'':'ghost'}" data-a="sv" data-v="${k}">${l}</button>`).join('')}</div>`;
+const chips=(vals,on,a)=>`<div class="row">${vals.map(([v,l])=>`<button class="${on===v?'':'ghost'}" data-a="${a}" data-v="${v}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div>`;
+function vMuscles(){
+  const D=864e5,now=Date.now(),rg=ui.mr in RGN?ui.mr:'30d',N=RGN[rg]*D;
+  const cur=S.workouts.filter(w=>!N||w.date>now-N),prv=N?S.workouts.filter(w=>w.date<=now-N&&w.date>now-2*N):[];
+  const mc=mset(cur),mp=mset(prv),keys=Object.keys(GRP);
+  const gsum=m=>{const g={};keys.forEach(k=>g[k]=0);Object.entries(m).forEach(([k,v])=>{if(G2[k])g[G2[k]]+=v});return g};
+  const gc=gsum(mc),gp=gsum(mp),mx=Math.max(1,...Object.values(gc),...Object.values(gp));
+  const pt=(k,r)=>{const a=(-120+60*keys.indexOf(k))*Math.PI/180;return[160+r*Math.cos(a),150+r*Math.sin(a)]};
+  const poly=(g,c)=>`<polygon points="${keys.map(k=>pt(k,100*g[k]/mx).join(',')).join(' ')}" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="2"/>`;
+  const hex=f=>`<polygon points="${keys.map(k=>pt(k,100*f).join(',')).join(' ')}" fill="none" stroke="var(--ln)"/>`;
+  const radar=`<svg viewBox="0 0 320 300" class="chart">${[.33,.66,1].map(hex).join('')}${N?poly(gp,'var(--sub)'):''}${poly(gc,'var(--ac)')}${keys.map(k=>{const p=pt(k,122);return `<text x="${p[0]}" y="${p[1]+4}" text-anchor="middle" font-size="12" fill="var(--sub)">${k}</text>`}).join('')}</svg>`;
+  const tot=ws=>({n:ws.length,d:ws.reduce((t,w)=>t+(w.dur||0),0),v:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0),s:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+e.sets.filter(s=>s.t!=='w').length,0),0)});
+  const a=tot(cur),b=tot(prv),k1=n=>n>=1000?Math.round(n/100)/10+'k':String(Math.round(n));
+  const dl=(x,y,f)=>N?`<span style="color:${x>=y?'var(--ok)':'#e03131'};font-size:12px">${x>=y?'↑':'↓'} ${f(Math.abs(x-y))}</span>`:'';
+  const cards=[['Workouts',a.n,dl(a.n,b.n,k1)],['Duration',fdur(a.d),dl(a.d,b.d,fdur)],['Volume',k1(a.v)+' '+S.unit,dl(a.v,b.v,k1)],['Sets',k1(a.s),dl(a.s,b.s,k1)]].map(([l,v,d])=>`<div class="card" style="margin:0"><div class="sub">${l}</div><b style="font-size:20px">${v}</b><div>${d}</div></div>`).join('');
+  const mb=ui.mb==='m'?'m':'w',step=(mb==='m'?30.44:7)*D,t0=N?now-N:(S.workouts.length?Math.min(...S.workouts.map(w=>w.date)):now),nb=Math.max(1,Math.ceil((now-t0)/step));
+  const names=Object.entries(mc).sort((x,y)=>y[1]-x[1]).map(x=>x[0]);if(!ui.ms)ui.ms=names.slice(0,2);
+  const sel=ui.ms.filter(m=>m in mc),COL=['#4c8dff','#f5c542','#2f9e44','#e03131','#7c5cff','#12b886'];
+  const sd=sel.map(()=>Array(nb).fill(0));cur.forEach(w=>{const i=Math.min(nb-1,Math.floor((w.date-t0)/step)),q=mset([w]);sel.forEach((m,j)=>sd[j][i]+=q[m]||0)});
+  const ym=Math.max(3,...sd.flat()),W=340,H=170,px=i=>30+(nb>1?i*(W-40)/(nb-1):(W-40)/2),py=v=>H-20-(v/ym)*(H-35);
+  const line=`<svg viewBox="0 0 ${W} ${H+10}" class="chart">${[0,.5,1].map(f=>`<line x1="30" x2="${W-5}" y1="${py(ym*f)}" y2="${py(ym*f)}" stroke="var(--ln)" stroke-dasharray="3"/><text x="2" y="${py(ym*f)+4}" font-size="10" fill="var(--sub)">${Math.round(ym*f*10)/10}</text>`).join('')}${sd.map((s,j)=>`<polyline fill="none" stroke="${COL[j%6]}" stroke-width="2" points="${s.map((v,i)=>px(i)+','+py(v)).join(' ')}"/>${s.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v)}" r="3" fill="${COL[j%6]}"/>`).join('')}`).join('')}<text x="30" y="${H+6}" font-size="10" fill="var(--sub)">${fd(t0)}</text><text x="${W-5}" y="${H+6}" font-size="10" text-anchor="end" fill="var(--sub)">${fd(now)}</text></svg>`;
+  const rows=names.map(m=>{const j=sel.indexOf(m),on=j>=0;return `<div class="item" data-a="ms" data-v="${esc(m)}"><span><span style="display:inline-block;width:18px;height:18px;border-radius:5px;border:2px solid ${on?COL[j%6]:'var(--ln)'};background:${on?COL[j%6]:'transparent'};color:#fff;font-size:12px;text-align:center;line-height:14px;vertical-align:middle;margin-right:8px">${on?'✓':''}</span>${esc(m)}</span><b>${Math.round(mc[m]*10)/10}</b></div>`}).join('');
+  const mxm=Math.max(1,...Object.values(mc)),heat=`<svg viewBox="0 0 120 118" width="220" style="display:block;margin:0 auto">${BASE}${Object.entries(mc).map(([m,v])=>BM[m]?`<g fill="var(--ac)" opacity="${.2+.8*v/mxm}">${BM[m][0]}<g transform="translate(60 0)">${BM[m][1]}</g></g>`:'').join('')}</svg>`;
+  const cnt={};cur.forEach(w=>w.ex.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1));
+  const top=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,8).map(([n,c])=>`<div class="item" style="cursor:default"><span>${esc(n)}</span><b>${c}×</b></div>`).join('');
+  return `<h2>Stats</h2>${svTabs()}${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mr')}<h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> Current${N?' &nbsp; <span>●</span> Previous':''}</div><div class="stats" style="grid-template-columns:1fr 1fr;margin-top:10px">${cards}</div><h3>Set count per muscle</h3>${chips([['w','Week'],['m','Month']],mb,'mb')}<div style="height:8px"></div>${line}<div class="card" style="padding:0;margin-top:8px">${rows||'<p class="sub" style="padding:12px">No sets logged in this range.</p>'}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded.</p><h3>Muscle heat map</h3>${heat}<h3>Main exercises</h3>${top||'<p class="sub">Nothing logged in this range.</p>'}`;
 }
 function vEx(){
-  return `<h2>Exercises</h2><div class="card"><input id="cn" placeholder="New exercise name"><div class="row"><input id="cm" list="mg" placeholder="Primary muscle"></div><div class="row"><input id="cs" placeholder="Secondary muscles (comma separated)" style="flex:1"><button data-a="cadd">Add</button></div><datalist id="mg">${MG.map(m=>`<option>${m}</option>`).join('')}</datalist></div><input data-q placeholder="Search…"><div>`+
-  all().map(x=>`<div class="item" data-a="info" data-n="${esc(x.name)}" data-k="${esc(kk(x))}" style="cursor:pointer"><div style="display:flex;gap:10px;align-items:center">${bmap(x,44)}<div>${esc(x.name)}<div class="sub">${ml(x)}</div></div></div>${S.custom.includes(x)?`<a data-a="cdel" data-n="${esc(x.name)}" style="color:#e03131;cursor:pointer">✕</a>`:''}</div>`).join('')+`</div>`;
+  return `<h2>Exercises</h2>${vCE()}<input data-q placeholder="Search…"><div>`+
+  all().map(x=>`<div class="item sw ${ui.sw===x.name?'open':''}" data-k="${esc(kk(x))}" ${S.custom.includes(x)?`data-sw="${esc(x.name)}"`:''}><div class="swin" data-a="info" data-n="${esc(x.name)}"><div style="display:flex;gap:10px;align-items:center">${bmap(x,44)}<div>${esc(x.name)}<div class="sub">${ml(x)}</div></div></div></div>${S.custom.includes(x)?`<div class="swact"><button data-a="cedit" data-n="${esc(x.name)}">Edit</button><button class="red" data-a="cdel2" data-n="${esc(x.name)}">${ui.cd===x.name?'Sure?':'Delete'}</button></div>`:''}</div>`).join('')+`</div>`;
 }
 function vMore(){
   const seg=(k,vals)=>vals.map(v=>`<button class="${S[k]===v?'':'ghost'}" data-a="set" data-k="${k}" data-v="${v}">${v}${k==='restSec'?'s':''}</button>`).join('');
-  return `<h2>Settings</h2><div class="card"><b>Units</b><div class="row">${seg('unit',['kg','lb'])}</div></div><div class="card"><b>Rest timer</b><div class="row">${seg('restSec',[60,90,120,180])}</div></div>
+  return `<h2>Settings</h2><div class="card"><b>Units</b><div class="row">${seg('unit',['kg','lb'])}</div></div><div class="card"><b>Rest timer</b><div class="row">${seg('restSec',[60,90,120,180])}</div></div><div class="card"><b>Keypad +/− step (weight)</b><div class="row">${seg('step',[1.25,2.5,5])}</div></div>
   <div class="card"><b>Your data</b><div class="sub">Stored privately in your account, with a copy on this device. Export a JSON backup any time.</div><div class="row"><button data-a="export">Export JSON</button><button class="ghost" data-a="import">Import JSON</button><input type="file" id="imp" accept=".json,application/json" style="display:none"></div></div>
   <button class="ghost big" data-a="reset">${ui.rs?'Tap again to erase everything':'Reset all data'}</button>`;
 }
 function render(){
-  $('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+  const _sh=$('.sheet'),_st=_sh?_sh.scrollTop:0;$('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'')+(ui.ce?vCEm():'')+(ui.st?vSt():'');
+  {const s2=$('.sheet');if(s2)s2.scrollTop=_st}if(cur&&!cur.isConnected){cur=null;$('#kp').style.display='none';document.body.classList.remove('kp')}document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   tick();
 }
 function tick(){
@@ -206,16 +281,19 @@ function tick(){
 }
 setInterval(tick,1000);
 
-function freshSets(n){return blank(Math.max(1,lastSets(n).length))}
+function newSets(n,k,d){const s=lastSets(n).map(x=>({w:'',r:'',d:false,t:'wdf'.includes(x.t||'-')?x.t:''}));if(k){while(s.length<k)s.push({w:'',r:'',d:false,t:''})}if(s.length&&!s.some(x=>x.t!=='w'))s.push({w:'',r:'',d:false,t:''});return s.length?s:blank(k||d||1)}
+function freshSets(n){return newSets(n)}
 document.addEventListener('click',async e=>{
   const t=e.target.closest('[data-a],[data-t]');if(!t)return;
+  if((t.dataset.a==='info'||t.dataset.a==='rstart'||t.dataset.a==='rmenu')&&Date.now()-swt<500)return;
+  if(t.dataset.a==='info'&&t.closest('.sw.open')){t.closest('.sw').classList.remove('open');ui.sw=null;return}
   if(t.dataset.t){tab=t.dataset.t;ui={};render();return}
   ui.msg=null;
   const a=t.dataset.a,i=+t.dataset.i,j=+t.dataset.j,A=S.active;
   if(a==='import'){$('#imp').click();return}
   switch(a){
     case 'start':S.active={id:uid(),name:'Workout',start:null,ex:[],save:false};break;
-    case 'rstart':{const r=S.routines[i];S.active={id:uid(),name:r.name,rid:r.id,upd:false,start:null,save:false,ex:rx(r).map(x=>({n:x.n,sets:blank(x.k||lastSets(x.n).length||3)}))};break}
+    case 'rstart':{const r=S.routines[i];S.active={id:uid(),name:r.name,rid:r.id,upd:false,start:null,save:false,ex:rx(r).map(x=>({n:x.n,sets:newSets(x.n,x.k,3)}))};break}
     case 'rnew':ui.rb={name:'',ex:[]};break;
     case 'redit':{const r=S.routines[i];ui.rb={id:r.id,name:r.name,ex:rx(r).map(x=>({n:x.n,k:x.k||lastSets(x.n).length||3}))};break}
     case 'rcancel':ui.rb=null;break;
@@ -232,23 +310,45 @@ document.addEventListener('click',async e=>{
     case 'upd1':A.upd=true;break;
     case 'info':ui.info=t.dataset.n;break;
     case 'closeinfo':ui.info=null;break;
+    case 'cnew':ui.ce={o:null,name:'',m:'',s:[]};ui.err=null;break;
+    case 'cedit':{const x=S.custom.find(y=>y.name===t.dataset.n);if(x){tab='e';ui.info=null;ui.err=null;ui.ce={o:x.name,name:x.name,m:x.muscle,s:[...(x.sec||[])]}}break}
+    case 'cx':ui.ce=null;ui.err=null;break;
+    case 'cm':ui.ce.m=t.dataset.v;ui.ce.s=ui.ce.s.filter(m=>m!==t.dataset.v);break;
+    case 'cs':{const s=ui.ce.s,v=t.dataset.v,k=s.indexOf(v);if(k>=0)s.splice(k,1);else s.push(v);break}
+    case 'csave':{const c=ui.ce,n=c.name.trim();if(!n||!c.m){ui.err='Enter a name and pick a primary muscle';break}if(all().some(x=>x.name.toLowerCase()===n.toLowerCase()&&x.name!==c.o)){ui.err='An exercise with that name already exists';break}const e2={name:n,muscle:c.m,sec:c.s.filter(m=>m!==c.m)};if(c.o){const k=S.custom.findIndex(x=>x.name===c.o);S.custom[k]=e2;if(c.o!==n)renameEx(c.o,n)}else S.custom.push(e2);ui.ce=null;ui.err=null;break}
+    case 'cdel2':if(ui.cd===t.dataset.n){S.custom=S.custom.filter(x=>x.name!==t.dataset.n);ui.cd=null;ui.sw=null}else ui.cd=t.dataset.n;break;
     case 'rg':ui.rg=t.dataset.v;break;
+    case 'rep':ui.rep=true;ui.rmo=0;window.scrollTo(0,0);break;
+    case 'repx':ui.rep=false;break;
+    case 'rmo':ui.rmo=Math.min(0,(ui.rmo|0)+ +t.dataset.v);break;
+    case 'rmt':ui.rmt=t.dataset.v;break;
+    case 'rmm':ui.rmm=!ui.rmm;break;
+    case 'rme':ui.rme=!ui.rme;break;
+    case 'prs':ui.pr=true;window.scrollTo(0,0);break;
+    case 'prx':ui.pr=false;break;
+    case 'sv':ui.sv=t.dataset.v;break;
+    case 'mr':ui.mr=t.dataset.v;ui.ms=null;break;
+    case 'mb':ui.mb=t.dataset.v;break;
+    case 'ms':{const i=ui.ms.indexOf(t.dataset.v);if(i>=0)ui.ms.splice(i,1);else ui.ms.push(t.dataset.v);break}
     case 'mt':ui.mt=t.dataset.v;break;
-    case 'wu':{const s=A.ex[i].sets[j];s.t=s.t==='w'?'':'w';break}
-    case 'add':if(ui.swap!=null){const e=A.ex[ui.swap];if(!e.o)e.o=e.n;e.n=t.dataset.n;e.sets=blank(e.sets.length);ui.swap=null}else if(ui.rb)ui.rb.ex.push({n:t.dataset.n,k:3});else A.ex.push({n:t.dataset.n,sets:freshSets(t.dataset.n)});ui.pick=false;break;
+    case 'st':ui.st=[i,j];break;
+    case 'stx':ui.st=null;break;
+    case 'sett':{const[a2,b2]=ui.st;A.ex[a2].sets[b2].t=t.dataset.v;ui.st=null;break}
+    case 'add':if(ui.swap!=null){const e=A.ex[ui.swap];if(!e.o)e.o=e.n;e.n=t.dataset.n;e.sets=newSets(t.dataset.n,e.sets.length);ui.swap=null}else if(ui.rb)ui.rb.ex.push({n:t.dataset.n,k:3});else A.ex.push({n:t.dataset.n,sets:freshSets(t.dataset.n)});if(A&&A.dl)applyDl(A);ui.pick=false;break;
     case 'rmex':A.ex.splice(i,1);break;
     case 'addset':{const l=A.ex[i].sets.slice(-1)[0];A.ex[i].sets.push({w:l?l.w:'',r:l?l.r:'',d:false});break}
     case 'delset':A.ex[i].sets.pop();break;
     case 'chk':{const e=A.ex[i],s=e.sets[j],p=ph(e,j);if(!s.d&&p){if(s.w==='')s.w=p.w;if(s.r==='')s.r=p.r}s.d=!s.d;if(s.d&&!A.start)A.start=Date.now();S.rest=s.d?Date.now()+S.restSec*1000:0;break}
     case 'skip':S.rest=0;break;
     case 'finish':{
-      const clean=A.ex.map(x=>({n:x.n,sets:x.sets.filter(s=>s.d||+s.r>0).map(s=>({w:+s.w||0,r:+s.r||0,t:s.t==='w'?'w':''}))})).filter(x=>x.sets.length);
+      const clean=A.ex.map(x=>({n:x.n,sets:x.sets.filter(s=>s.d||+s.r>0).map(s=>({w:+s.w||0,r:+s.r||0,t:'wdf'.includes(s.t||'-')?s.t:''}))})).filter(x=>x.sets.length);
       if(!clean.length){ui.msg='Log at least one set first';break}
       const prs=clean.filter(x=>{const a=rc(x.sets),b=recs(x.n);return a.w>b.w||a.e>b.e||a.v>b.v}).length;
-      S.workouts.push({id:A.id,name:A.name||'Workout',date:Date.now(),dur:A.start?Date.now()-A.start:0,ex:clean});
+      S.workouts.push({id:A.id,name:A.name||'Workout',date:Date.now(),dur:A.start?Date.now()-A.start:0,dl:!!A.dl,ex:clean});
       if(A.save)S.routines.push({id:uid(),name:A.name||'Routine',ex:clean.map(x=>({n:x.n,k:x.sets.length}))});
       if(A.upd&&A.rid){const r=S.routines.find(y=>y.id===A.rid);if(r)r.ex=A.ex.map(e=>({n:e.n,k:e.sets.length}))}
       S.active=null;S.rest=0;ui.msg='Workout saved'+(prs?` · ${prs} PR${prs>1?'s':''} 🏆`:'');break}
+    case 'hx':ui.hx=ui.hx===t.dataset.id?null:t.dataset.id;ui.hd=null;break;
     case 'hdel':if(ui.hd===t.dataset.id){S.workouts=S.workouts.filter(w=>w.id!==t.dataset.id);ui.hd=null}else ui.hd=t.dataset.id;break;
     case 'cadd':{const n=$('#cn').value.trim(),m=$('#cm').value.trim()||'Other',sc=$('#cs').value.split(',').map(s=>s.trim()).filter(Boolean);if(n&&!all().some(x=>x.name.toLowerCase()===n.toLowerCase()))S.custom.push({name:n,muscle:m,sec:sc});break}
     case 'cdel':S.custom=S.custom.filter(x=>x.name!==t.dataset.n);break;
@@ -264,22 +364,42 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('input',e=>{
   const t=e.target;
-  if(t.dataset.s){const[i,j,f]=t.dataset.s.split(',');S.active.ex[i].sets[j][f]=t.value;if(t.value&&!S.active.start)S.active.start=Date.now();persist()}
+  if(t.dataset.s){const[i,j,f]=t.dataset.s.split(',');S.active.ex[i].sets[j][f]=t.value;if(f==='w')S.active.ex[i].sets[j].auto=false;if(t.value&&!S.active.start)S.active.start=Date.now();persist()}
   else if('rn' in t.dataset)ui.rb.name=t.value
+  else if('cn' in t.dataset)ui.ce.name=t.value
   else if('nm' in t.dataset){S.active.name=t.value;persist()}
   else if('q' in t.dataset){const q=t.value.toLowerCase();document.querySelectorAll('.item[data-k]').forEach(r=>r.style.display=r.dataset.k.includes(q)?'':'none')}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
-  if('sr' in t.dataset){S.active.save=t.checked;persist()}
+  if('dl' in t.dataset){const A=S.active;A.dl=t.checked;t.checked?applyDl(A):clearDl(A);persist();render()}
+  else if('sr' in t.dataset){S.active.save=t.checked;persist()}
   else if('sel' in t.dataset){ui.sx=t.value;render()}
   else if(t.id==='imp'&&t.files[0]){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.workouts))throw 0;S=Object.assign(S,d);persist();render()}catch(x){alert('That file is not a valid LiftLog backup.')}};r.readAsText(t.files[0])}
 });
+let swt=0,tx=0,ty=0,tel=null;
+document.addEventListener('touchstart',e=>{tel=e.target.closest('[data-sw]');if(tel){tx=e.touches[0].clientX;ty=e.touches[0].clientY}},{passive:true});
+document.addEventListener('touchend',e=>{if(!tel)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty,el=tel;tel=null;if(Math.abs(dx)>40&&Math.abs(dy)<35){swt=Date.now();document.querySelectorAll('.sw.open').forEach(x=>{if(x!==el)x.classList.remove('open')});el.classList.toggle('open',dx<0);ui.sw=dx<0?el.dataset.sw:null}});
+let cur=null,fresh=false;
+function kpShow(el){if(cur!==el){cur=el;fresh=true}$('#kp').style.display='grid';document.body.classList.add('kp');setTimeout(()=>{try{el.scrollIntoView({block:'center',behavior:'smooth'})}catch(x){}},60)}
+function kpHide(){cur=null;$('#kp').style.display='none';document.body.classList.remove('kp');if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+function keypress(k){if(!cur)return;const f=cur.dataset.s.split(',')[2];let v=String(cur.value);
+  if(k==='hide')return kpHide();
+  if(k==='next'){const a=[...document.querySelectorAll('input[data-s]')],n=a[a.indexOf(cur)+1];if(n)kpShow(n);else kpHide();return}
+  if(k==='bk'){v=fresh?'':v.slice(0,-1);fresh=false}
+  else if(k==='+'||k==='-'){const st=f==='w'?(S.step||1.25):1,b=parseFloat(v)||parseFloat(cur.placeholder)||0;v=String(Math.round(Math.max(0,b+(k==='+'?st:-st))*100)/100);fresh=true}
+  else if(k==='.'){if(f==='r')return;if(fresh)v='0.';else if(v.includes('.'))return;else v=(v||'0')+'.';fresh=false}
+  else{v=fresh?k:v+k;if(v.length>7)return;fresh=false}
+  cur.value=v;cur.dispatchEvent(new Event('input',{bubbles:true}))}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b){keypress(b.dataset.k);return}const inp=e.target.closest('input[data-s]');if(inp){kpShow(inp);return}if(cur&&!e.target.closest('#kp'))kpHide()});
+document.addEventListener('focusin',e=>{const t=e.target;if(t&&t.matches&&t.matches('input[data-s]'))kpShow(t)});
+let dr=null,dr0=null,lp=0;
+document.addEventListener('touchstart',e=>{const rt=e.target.closest('.rt');if(!rt)return;dr0={el:rt,y:e.touches[0].clientY};clearTimeout(lp);lp=setTimeout(()=>{dr={el:rt,y0:dr0.y,over:null};rt.classList.add('dragging');swt=Date.now()},380)},{passive:true});
+document.addEventListener('touchmove',e=>{const y=e.touches[0].clientY;if(!dr){if(dr0&&Math.abs(y-dr0.y)>10)clearTimeout(lp);return}e.preventDefault();dr.el.style.transform='translateY('+(y-dr.y0)+'px)';dr.over=null;document.querySelectorAll('.rt').forEach(c=>{c.classList.remove('over');if(c!==dr.el){const r=c.getBoundingClientRect();if(y>=r.top&&y<=r.bottom){dr.over=c;c.classList.add('over')}}})},{passive:false});
+const dfin=()=>{clearTimeout(lp);if(!dr)return;const d=dr;dr=null;swt=Date.now();d.el.style.transform='';d.el.classList.remove('dragging');document.querySelectorAll('.rt.over').forEach(c=>c.classList.remove('over'));if(d.over){const a=+d.el.dataset.ri,b=+d.over.dataset.ri,[x]=S.routines.splice(a,1);S.routines.splice(b,0,x);persist();render()}};
+document.addEventListener('touchend',dfin);document.addEventListener('touchcancel',dfin);
 init();
-</script>
-<script>
 if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});}
-try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 </script>
 </body>
 </html>
