@@ -1,6 +1,6 @@
 // LiftLog service worker: works offline, updates itself when a connection is available.
 // Bump VERSION only if you want to force-clear old caches; normal updates need no change.
-const VERSION = 'liftlog-v1';
+const VERSION = 'liftlog-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
