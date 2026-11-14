@@ -283,9 +283,15 @@ function vMuscles(){
   const top=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,8).map(([n,c])=>`<div class="item" style="cursor:default"><span>${esc(n)}</span><b>${c}×</b></div>`).join('');
   return `<h2>Stats</h2>${svTabs()}${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mr')}<h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> Current${N?' &nbsp; <span>●</span> Previous':''}</div><h3>Set count per muscle</h3>${chips([['w','Week'],['m','Month']],mb,'mb')}<div style="height:8px"></div>${line}<div class="card" style="padding:0;margin-top:8px">${rows||'<p class="sub" style="padding:12px">No sets logged in this range.</p>'}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded.</p><h3>Muscle heat map</h3>${heat}<h3>Main exercises</h3>${top||'<p class="sub">Nothing logged in this range.</p>'}`;
 }
+const exGrp=x=>S.custom.includes(x)?'Custom':!x.brand?'Generic':/^Hammer/.test(x.brand)?(/Plate/.test(x.brand)?'Hammer Strength · Plate-Loaded':'Hammer Strength · Pin-Loaded'):/^Life/.test(x.brand)?'Life Fitness':/^Booty/.test(x.brand)?'Booty Builder':/^Panatta/.test(x.brand)?'Panatta':'Gymleco';
+const GDESC={Generic:'Free weights, cables & bodyweight — same everywhere',Custom:'Your own exercises','Hammer Strength · Plate-Loaded':'Plate-loaded machines','Hammer Strength · Pin-Loaded':'Pin-loaded: Select and MTS machines'};
+const exItem=x=>`<div class="item sw ${ui.sw===x.name?'open':''}" data-k="${esc(kk(x))}" ${S.custom.includes(x)?`data-sw="${esc(x.name)}"`:''}><div class="swin" data-a="info" data-n="${esc(x.name)}"><div style="display:flex;gap:10px;align-items:center">${bmap(x,44)}<div>${esc(x.name)}<div class="sub">${ml(x)}</div></div></div></div>${S.custom.includes(x)?`<div class="swact"><button data-a="cedit" data-n="${esc(x.name)}">Edit</button><button class="red" data-a="cdel2" data-n="${esc(x.name)}">${ui.cd===x.name?'Sure?':'Delete'}</button></div>`:''}</div>`;
 function vEx(){
-  return `<h2>Exercises</h2>${vCE()}<input data-q placeholder="Search…"><div>`+
-  all().map(x=>`<div class="item sw ${ui.sw===x.name?'open':''}" data-k="${esc(kk(x))}" ${S.custom.includes(x)?`data-sw="${esc(x.name)}"`:''}><div class="swin" data-a="info" data-n="${esc(x.name)}"><div style="display:flex;gap:10px;align-items:center">${bmap(x,44)}<div>${esc(x.name)}<div class="sub">${ml(x)}</div></div></div></div>${S.custom.includes(x)?`<div class="swact"><button data-a="cedit" data-n="${esc(x.name)}">Edit</button><button class="red" data-a="cdel2" data-n="${esc(x.name)}">${ui.cd===x.name?'Sure?':'Delete'}</button></div>`:''}</div>`).join('')+`</div>`;
+  const A=all(),gs={};A.forEach(x=>{(gs[exGrp(x)]=gs[exGrp(x)]||[]).push(x)});
+  const def=['Generic','Custom',...Object.keys(gs).filter(k=>k!=='Generic'&&k!=='Custom').sort()],sv=(S.gorder||[]).filter(k=>def.includes(k)),order=[...sv,...def.filter(k=>!sv.includes(k))];
+  if(ui.eg){const L=gs[ui.eg]||[];return `<div class="row sp" style="margin:0 0 8px"><button class="ghost" data-a="egx">‹ Back</button></div><h2>${esc(ui.eg)}</h2>${ui.eg==='Custom'?vCE():''}<div>${L.map(exItem).join('')||'<p class="sub">Nothing here yet.</p>'}</div>`}
+  const cards=order.filter(k=>gs[k]||k==='Custom').map(k=>`<div class="card rt" data-gn="${esc(k)}" data-a="eg" data-v="${esc(k)}" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center"><div><b>${esc(k)}</b><div class="sub">${esc(GDESC[k]||'Machines')}</div></div><span class="sub">${(gs[k]||[]).length} ›</span></div>`).join('');
+  return `<h2>Exercises</h2><input data-q placeholder="Search all exercises…" style="margin-bottom:8px"><div class="sub" style="margin-bottom:8px">Hold and drag a card to reorder</div><div id="grp">${cards}</div><div id="flat" style="display:none">${A.map(exItem).join('')}</div>`;
 }
 function vMore(){
   const seg=(k,vals)=>vals.map(v=>`<button class="${S[k]===v?'':'ghost'}" data-a="set" data-k="${k}" data-v="${v}">${v}${k==='restSec'?'s':''}</button>`).join('');
@@ -309,7 +315,7 @@ function newSets(n,k,d){const s=lastSets(n).map(x=>({w:'',r:'',d:false,t:'wdf'.i
 function freshSets(n){return newSets(n)}
 document.addEventListener('click',async e=>{
   const t=e.target.closest('[data-a],[data-t]');if(!t)return;
-  if((t.dataset.a==='info'||t.dataset.a==='rstart'||t.dataset.a==='rmenu')&&Date.now()-swt<500)return;
+  if((t.dataset.a==='info'||t.dataset.a==='rstart'||t.dataset.a==='rmenu'||t.dataset.a==='eg')&&Date.now()-swt<500)return;
   if(t.dataset.a==='info'&&t.closest('.sw.open')){t.closest('.sw').classList.remove('open');ui.sw=null;return}
   if(t.dataset.t){tab=t.dataset.t;ui={};render();return}
   ui.msg=null;
@@ -355,6 +361,8 @@ document.addEventListener('click',async e=>{
     case 'prs':ui.pr=true;window.scrollTo(0,0);break;
     case 'pg':ui.pg=true;window.scrollTo(0,0);break;
     case 'pgx':ui.pg=false;break;
+    case 'eg':ui.eg=t.dataset.v;window.scrollTo(0,0);break;
+    case 'egx':ui.eg=null;ui.sw=null;break;
     case 'prx':ui.pr=false;break;
     case 'sv':ui.sv=t.dataset.v;break;
     case 'mr':ui.mr=t.dataset.v;ui.ms=null;break;
@@ -400,7 +408,7 @@ document.addEventListener('input',e=>{
   else if('mv' in t.dataset)ui.mv=t.value
   else if('md' in t.dataset)ui.md=t.value
   else if('nm' in t.dataset){S.active.name=t.value;persist()}
-  else if('q' in t.dataset){const q=t.value.toLowerCase();document.querySelectorAll('.item[data-k]').forEach(r=>r.style.display=r.dataset.k.includes(q)?'':'none')}
+  else if('q' in t.dataset){const q=t.value.toLowerCase();document.querySelectorAll('.item[data-k]').forEach(r=>r.style.display=r.dataset.k.includes(q)?'':'none');const g=document.getElementById('grp'),f=document.getElementById('flat');if(g&&f&&!t.closest('.sheet')){g.style.display=q?'none':'';f.style.display=q?'':'none'}}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
@@ -428,7 +436,7 @@ document.addEventListener('focusin',e=>{const t=e.target;if(t&&t.matches&&t.matc
 let dr=null,dr0=null,lp=0;
 document.addEventListener('touchstart',e=>{const rt=e.target.closest('.rt');if(!rt)return;dr0={el:rt,y:e.touches[0].clientY};clearTimeout(lp);lp=setTimeout(()=>{dr={el:rt,y0:dr0.y,over:null};rt.classList.add('dragging');swt=Date.now()},380)},{passive:true});
 document.addEventListener('touchmove',e=>{const y=e.touches[0].clientY;if(!dr){if(dr0&&Math.abs(y-dr0.y)>10)clearTimeout(lp);return}e.preventDefault();dr.el.style.transform='translateY('+(y-dr.y0)+'px)';dr.over=null;document.querySelectorAll('.rt').forEach(c=>{c.classList.remove('over');if(c!==dr.el){const r=c.getBoundingClientRect();if(y>=r.top&&y<=r.bottom){dr.over=c;c.classList.add('over')}}})},{passive:false});
-const dfin=()=>{clearTimeout(lp);if(!dr)return;const d=dr;dr=null;swt=Date.now();d.el.style.transform='';d.el.classList.remove('dragging');document.querySelectorAll('.rt.over').forEach(c=>c.classList.remove('over'));if(d.over){const a=+d.el.dataset.ri,b=+d.over.dataset.ri,[x]=S.routines.splice(a,1);S.routines.splice(b,0,x);persist();render()}};
+const dfin=()=>{clearTimeout(lp);if(!dr)return;const d=dr;dr=null;swt=Date.now();d.el.style.transform='';d.el.classList.remove('dragging');document.querySelectorAll('.rt.over').forEach(c=>c.classList.remove('over'));if(d.over&&d.el.dataset.gn){const g=[...document.querySelectorAll('.rt[data-gn]')].map(c=>c.dataset.gn),a=g.indexOf(d.el.dataset.gn),b=g.indexOf(d.over.dataset.gn),[x]=g.splice(a,1);g.splice(b,0,x);S.gorder=g;persist();render()}else if(d.over){const a=+d.el.dataset.ri,b=+d.over.dataset.ri,[x]=S.routines.splice(a,1);S.routines.splice(b,0,x);persist();render()}};
 document.addEventListener('touchend',dfin);document.addEventListener('touchcancel',dfin);
 init();
 if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});}
