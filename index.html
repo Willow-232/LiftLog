@@ -204,13 +204,36 @@ function vRep(){
   const more=(l,on,act,len,lim)=>len>lim?`<button class="ghost" data-a="${act}" style="width:100%;border:0">${on?'Show less':'See '+(len-lim)+' more'}</button>`:'';
   return `<div class="row sp" style="margin:0 0 8px"><button class="ghost" data-a="repx">‹ Back</button></div><div class="row sp" style="margin:0"><button class="ghost" data-a="rmo" data-v="-1">‹</button><h2 style="margin:0">${ml2(t0)}</h2><button class="ghost" data-a="rmo" data-v="1" ${off>=0?'disabled style="opacity:.3"':''}>›</button></div><div style="font-size:30px;font-weight:700;margin-top:10px">${a.d} <span class="sub" style="font-size:16px;font-weight:400">days trained</span> ${dl(a.d,b.d,String)}</div>${cur.length?'':'<p class="sub">No workouts logged this month.</p>'}${chart}${chips([['d','Days'],['n','Workouts'],['t','Duration'],['v','Volume'],['s','Sets']],mt,'rmt')}<h3>Summary</h3><div class="stats" style="grid-template-columns:1fr 1fr">${cards}</div><h3>Personal records</h3><div class="card" style="padding:4px 12px"><div style="text-align:center;font-weight:700;padding:8px">🏅 ${pr.length} new PR${pr.length===1?'':'s'}</div>${prh}</div><h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> ${ml2(t0)} &nbsp; <span>●</span> ${ml2(p0)}</div><h3>Main muscle groups</h3><div class="card">${msh||'<p class="sub">No sets logged.</p>'}${more('',ui.rmm,'rmm',ms.length,6)}</div><h3>Top exercises</h3><div class="card" style="padding:0 12px">${teh||'<p class="sub" style="padding:12px 0">Nothing logged.</p>'}${more('',ui.rme,'rme',te.length,3)}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded. Arrows compare with the previous month.</p>`;
 }
+const tdy=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')};
+function vMeas(){
+  S.meas=S.meas||{weight:[]};const L=S.meas.weight.slice().sort((a,b)=>a.d-b.d),r1=v=>Math.round(v*10)/10;
+  const RG2={'30d':30,'3m':91,'1y':365,all:0},rg=ui.mrg in RG2?ui.mrg:'3m',pts=L.filter(x=>!RG2[rg]||x.d>Date.now()-RG2[rg]*864e5);
+  const cur=L.length?L[L.length-1].v:null,chg=pts.length>1?pts[pts.length-1].v-pts[0].v:null,avg=pts.length?pts.reduce((t,x)=>t+x.v,0)/pts.length:null;
+  const W=340,H=150,pd=14;let mn=Math.min(...pts.map(x=>x.v)),mx=Math.max(...pts.map(x=>x.v));if(!pts.length){mn=0;mx=1}if(mx===mn){mn-=1;mx+=1}
+  const d0=pts.length?pts[0].d:0,d1=pts.length?pts[pts.length-1].d:1,xy=pts.map(x=>[pd+30+(d1>d0?(x.d-d0)/(d1-d0):.5)*(W-2*pd-30),H-pd-(x.v-mn)/(mx-mn)*(H-2*pd)]);
+  const chart=`<svg viewBox="0 0 ${W} ${H+14}" class="chart">${[0,.5,1].map(f=>{const y=H-pd-f*(H-2*pd);return `<line x1="40" x2="${W-6}" y1="${y}" y2="${y}" stroke="var(--ln)" stroke-dasharray="3"/><text x="2" y="${y+4}" font-size="10" fill="var(--sub)">${r1(mn+f*(mx-mn))}</text>`}).join('')}${xy.length>1?`<polyline points="${xy.map(a=>a.join(',')).join(' ')}" fill="none" stroke="var(--ac)" stroke-width="2"/>`:''}${xy.map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="3.5" fill="var(--ac)"/>`).join('')}${pts.length?`<text x="40" y="${H+8}" font-size="10" fill="var(--sub)">${fd(d0)}</text><text x="${W-6}" y="${H+8}" font-size="10" text-anchor="end" fill="var(--sub)">${fd(d1)}</text>`:''}</svg>`;
+  const c=(v,l)=>`<div class="card"><b style="font-size:18px">${v}</b><span class="sub">${l}</span></div>`;
+  const list=[...L].reverse(),shown=ui.mall?list:list.slice(0,8);
+  const rows=shown.map(x=>`<div class="item" style="cursor:default"><span>${new Date(x.d).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span><b>${r1(x.v)} ${S.unit}</b> <button class="ghost" data-a="mdel" data-id="${x.id}" style="padding:2px 10px;margin-left:8px">${ui.mdc===x.id?'Sure?':'✕'}</button></span></div>`).join('');
+  return `<h2>Stats</h2>${svTabs()}<h3>Body weight</h3><div class="card"><div class="row" style="margin:0"><input data-mv type="text" inputmode="decimal" placeholder="Weight (${S.unit})" value="${esc(ui.mv||'')}" style="flex:1"><input data-md type="date" value="${esc(ui.md||tdy())}" style="flex:1"></div>${ui.merr?`<div class="sub" style="color:#e03131;margin-top:6px">${esc(ui.merr)}</div>`:''}<div class="row"><button data-a="madd" style="width:100%">Log weight</button></div></div>${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mrg')}<div style="height:8px"></div>${chart}<div class="stats" style="margin-top:8px">${c(cur==null?'–':r1(cur)+' '+S.unit,'current')}${c(chg==null?'–':(chg>0?'+':'')+r1(chg)+' '+S.unit,'change')}${c(avg==null?'–':r1(avg)+' '+S.unit,'average')}</div><h3>Entries</h3><div class="card" style="padding:0 12px">${rows||'<p class="sub" style="padding:12px 0">No weigh-ins yet. Log your first one above.</p>'}</div>${list.length>8?`<button class="ghost" data-a="mall" style="width:100%;margin-top:8px">${ui.mall?'Show less':'See all '+list.length}</button>`:''}`;
+}
+function vSum(){
+  const D=864e5,now=Date.now(),rg=ui.mr in RGN?ui.mr:'30d',N=RGN[rg]*D;
+  const cur=S.workouts.filter(w=>!N||w.date>now-N),prv=N?S.workouts.filter(w=>w.date<=now-N&&w.date>now-2*N):[];
+  const tot=ws=>({n:ws.length,d:ws.reduce((t,w)=>t+(w.dur||0),0),v:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0),s:ws.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+e.sets.filter(q=>q.t!=='w').length,0),0)});
+  const a=tot(cur),b=tot(prv),k1=n=>n>=1000?Math.round(n/100)/10+'k':String(Math.round(n));
+  const dl=(x,y,f)=>N&&x!==y?`<span style="color:${x>y?'var(--ok)':'#e03131'};font-size:12px">${x>y?'↑':'↓'} ${f(Math.abs(x-y))}</span>`:'';
+  const cards=[['Workouts',a.n,dl(a.n,b.n,k1)],['Duration',fdur(a.d),dl(a.d,b.d,fdur)],['Volume',k1(a.v)+' '+S.unit,dl(a.v,b.v,k1)],['Sets',k1(a.s),dl(a.s,b.s,k1)]].map(([l,v,d])=>`<div class="card" style="margin:0"><div class="sub">${l}</div><b style="font-size:20px">${v}</b><div>${d||'&nbsp;'}</div></div>`).join('');
+  return `${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mr')}<div class="stats" style="grid-template-columns:1fr 1fr;margin-top:10px">${cards}</div>`;
+}
 function vStats(){
   if(ui.rep)return vRep();
   if(ui.pr)return vPR();
   const names=[...new Set(S.workouts.flatMap(w=>w.ex.map(e=>e.n)))].sort();
   const wk=Date.now()-7*864e5,wks=S.workouts.filter(w=>w.date>wk);
   if(ui.sv==='m')return vMuscles();
-  let h=`<h2>Stats</h2>${svTabs()}<div class="stats"><div class="card"><b>${S.workouts.length}</b><span class="sub">workouts</span></div><div class="card"><b>${wks.length}</b><span class="sub">this week</span></div><div class="card"><b>${Math.round(wks.reduce((t,w)=>t+w.ex.reduce((x,e)=>x+vol(e.sets),0),0)/1000*10)/10}k</b><span class="sub">${S.unit} lifted</span></div></div>`;
+  if(ui.sv==='b')return vMeas();
+  let h=`<h2>Stats</h2>${svTabs()}${vSum()}`;
   if(!names.length)return h+'<p class="sub">Log a workout to see progress charts.</p>';
   const mc={};wks.forEach(w=>w.ex.forEach(e=>{const x=all().find(y=>y.name===e.n);if(!x)return;const n=e.sets.filter(s=>s.t!=='w').length;mc[x.muscle]=(mc[x.muscle]||0)+n;(x.sec||[]).forEach(s=>mc[s]=(mc[s]||0)+n/2)}));
   const mm=Math.max(1,...Object.values(mc));
@@ -222,16 +245,17 @@ function vStats(){
   const pts=raw.map(a=>a.y);
   const mx=Math.max(0,...pts),mn=Math.min(...pts,mx),W=320,H=140,p=12;
   const d0=raw.length?raw[0].d:0,d1=raw.length?raw[raw.length-1].d:1,xy=raw.map(a=>[p+(d1>d0?(a.d-d0)/(d1-d0):.5)*(W-2*p),H-p-(mx===mn?.5:(a.y-mn)/(mx-mn))*(H-2*p)]);
-  h+=`<h3>Progress</h3><select data-sel>${names.map(n=>`<option ${n===sel?'selected':''}>${esc(n)}</option>`).join('')}</select><div class="row">${[['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']].map(([k,l])=>`<button class="${rg===k?'':'ghost'}" data-a="rg" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div class="row">${[['e','Est. 1RM'],['w','Heaviest'],['v','Set volume'],['r','Max reps']].map(([k,l])=>`<button class="${mt===k?'':'ghost'}" data-a="mt" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div style="height:8px"></div>
+  const ch=`<select data-sel>${names.map(n=>`<option ${n===sel?'selected':''}>${esc(n)}</option>`).join('')}</select><div class="row">${[['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']].map(([k,l])=>`<button class="${rg===k?'':'ghost'}" data-a="rg" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div class="row">${[['e','Est. 1RM'],['w','Heaviest'],['v','Set volume'],['r','Max reps']].map(([k,l])=>`<button class="${mt===k?'':'ghost'}" data-a="mt" data-v="${k}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div><div style="height:8px"></div>
   <svg class="chart" viewBox="0 0 ${W} ${H}"><polyline points="${xy.map(a=>a.join(',')).join(' ')}" fill="none" stroke="var(--ac)" stroke-width="2"/>${xy.map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="3.5" fill="var(--ac)"/>`).join('')}</svg>
   <div class="row sp sub" style="margin:2px 2px 0"><span>${pts.length?fd(d0):''}</span><span>${pts.length?fd(d1):''}</span></div><p class="sub">${pts.length?`${{e:'Estimated 1RM (Epley)',w:'Heaviest set',v:'Best set volume',r:'Most reps in a set'}[mt]} per session · ${pts.length} session${pts.length>1?'s':''} · low ${Math.round(mn*10)/10}, high ${Math.round(mx*10)/10} ${mt==='r'?'reps':S.unit}`:'No sessions of this exercise in this range.'}</p>`;
-  return h+`<button class="big ghost" data-a="rep" style="margin-top:16px">📅 Monthly report ›</button><button class="big ghost" data-a="prs" style="margin-top:8px">🏆 Personal records (${names.length}) ›</button>`;
+  if(ui.pg)return `<div class="row sp" style="margin:0 0 8px"><button class="ghost" data-a="pgx">‹ Back</button></div><h2>Exercise graphs</h2>${ch}`;
+  return h+`<button class="big ghost" data-a="pg" style="margin-top:16px">📈 Exercise graphs ›</button><button class="big ghost" data-a="rep" style="margin-top:8px">📅 Monthly report ›</button><button class="big ghost" data-a="prs" style="margin-top:8px">🏆 Personal records (${names.length}) ›</button>`;
 }
 const GRP={Back:'Lats,Mid Back,Lower Back,Traps,Rhomboids',Chest:'Chest,Upper Chest',Core:'Abs,Obliques,Core,Hip Flexors',Shoulders:'Front Delts,Side Delts,Rear Delts',Arms:'Biceps,Triceps,Forearms',Legs:'Quadriceps,Hamstrings,Glutes,Adductors,Calves,Tibialis'},G2={};
 Object.entries(GRP).forEach(([g,m])=>m.split(',').forEach(x=>G2[x]=g));
 const mset=ws=>{const r={};ws.forEach(w=>w.ex.forEach(e=>{const x=all().find(y=>y.name===e.n);if(!x)return;const n=e.sets.filter(s=>s.t!=='w').length;r[x.muscle]=(r[x.muscle]||0)+n;(x.sec||[]).forEach(m=>r[m]=(r[m]||0)+n/2)}));return r};
 const RGN={'30d':30,'3m':91,'1y':365,all:0};
-const svTabs=()=>`<div class="row">${[['p','Progress'],['m','Muscles']].map(([k,l])=>`<button class="${(ui.sv||'p')===k?'':'ghost'}" data-a="sv" data-v="${k}">${l}</button>`).join('')}</div>`;
+const svTabs=()=>`<div class="row" style="margin-bottom:14px">${[['p','Progress'],['m','Muscles'],['b','Measures']].map(([k,l])=>`<button class="${(ui.sv||'p')===k?'':'ghost'}" data-a="sv" data-v="${k}">${l}</button>`).join('')}</div>`;
 const chips=(vals,on,a)=>`<div class="row">${vals.map(([v,l])=>`<button class="${on===v?'':'ghost'}" data-a="${a}" data-v="${v}" style="padding:6px 10px;font-size:13px">${l}</button>`).join('')}</div>`;
 function vMuscles(){
   const D=864e5,now=Date.now(),rg=ui.mr in RGN?ui.mr:'30d',N=RGN[rg]*D;
@@ -257,7 +281,7 @@ function vMuscles(){
   const mxm=Math.max(1,...Object.values(mc)),heat=`<svg viewBox="0 0 120 118" width="220" style="display:block;margin:0 auto">${BASE}${Object.entries(mc).map(([m,v])=>BM[m]?`<g fill="var(--ac)" opacity="${.2+.8*v/mxm}">${BM[m][0]}<g transform="translate(60 0)">${BM[m][1]}</g></g>`:'').join('')}</svg>`;
   const cnt={};cur.forEach(w=>w.ex.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1));
   const top=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).slice(0,8).map(([n,c])=>`<div class="item" style="cursor:default"><span>${esc(n)}</span><b>${c}×</b></div>`).join('');
-  return `<h2>Stats</h2>${svTabs()}${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mr')}<h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> Current${N?' &nbsp; <span>●</span> Previous':''}</div><div class="stats" style="grid-template-columns:1fr 1fr;margin-top:10px">${cards}</div><h3>Set count per muscle</h3>${chips([['w','Week'],['m','Month']],mb,'mb')}<div style="height:8px"></div>${line}<div class="card" style="padding:0;margin-top:8px">${rows||'<p class="sub" style="padding:12px">No sets logged in this range.</p>'}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded.</p><h3>Muscle heat map</h3>${heat}<h3>Main exercises</h3>${top||'<p class="sub">Nothing logged in this range.</p>'}`;
+  return `<h2>Stats</h2>${svTabs()}${chips([['30d','30 days'],['3m','3 months'],['1y','1 year'],['all','All time']],rg,'mr')}<h3>Muscle distribution</h3>${radar}<div class="sub" style="text-align:center"><span style="color:var(--ac)">●</span> Current${N?' &nbsp; <span>●</span> Previous':''}</div><h3>Set count per muscle</h3>${chips([['w','Week'],['m','Month']],mb,'mb')}<div style="height:8px"></div>${line}<div class="card" style="padding:0;margin-top:8px">${rows||'<p class="sub" style="padding:12px">No sets logged in this range.</p>'}</div><p class="sub">Primary muscle = 1 set, secondary = ½ set. Warm-ups excluded.</p><h3>Muscle heat map</h3>${heat}<h3>Main exercises</h3>${top||'<p class="sub">Nothing logged in this range.</p>'}`;
 }
 function vEx(){
   return `<h2>Exercises</h2>${vCE()}<input data-q placeholder="Search…"><div>`+
@@ -324,7 +348,13 @@ document.addEventListener('click',async e=>{
     case 'rmt':ui.rmt=t.dataset.v;break;
     case 'rmm':ui.rmm=!ui.rmm;break;
     case 'rme':ui.rme=!ui.rme;break;
+    case 'madd':{const v=parseFloat(String(ui.mv||'').replace(',','.')),ds=ui.md||tdy();if(!(v>0&&v<1000)){ui.merr='Enter a valid weight';break}const q=ds.split('-').map(Number);S.meas=S.meas||{weight:[]};S.meas.weight.push({id:uid(),d:new Date(q[0],q[1]-1,q[2],12).getTime(),v});ui.mv='';ui.merr=null;ui.md=null;break}
+    case 'mdel':if(ui.mdc===t.dataset.id){S.meas.weight=S.meas.weight.filter(x=>x.id!==t.dataset.id);ui.mdc=null}else ui.mdc=t.dataset.id;break;
+    case 'mrg':ui.mrg=t.dataset.v;break;
+    case 'mall':ui.mall=!ui.mall;break;
     case 'prs':ui.pr=true;window.scrollTo(0,0);break;
+    case 'pg':ui.pg=true;window.scrollTo(0,0);break;
+    case 'pgx':ui.pg=false;break;
     case 'prx':ui.pr=false;break;
     case 'sv':ui.sv=t.dataset.v;break;
     case 'mr':ui.mr=t.dataset.v;ui.ms=null;break;
@@ -367,6 +397,8 @@ document.addEventListener('input',e=>{
   if(t.dataset.s){const[i,j,f]=t.dataset.s.split(',');S.active.ex[i].sets[j][f]=t.value;if(f==='w')S.active.ex[i].sets[j].auto=false;if(t.value&&!S.active.start)S.active.start=Date.now();persist()}
   else if('rn' in t.dataset)ui.rb.name=t.value
   else if('cn' in t.dataset)ui.ce.name=t.value
+  else if('mv' in t.dataset)ui.mv=t.value
+  else if('md' in t.dataset)ui.md=t.value
   else if('nm' in t.dataset){S.active.name=t.value;persist()}
   else if('q' in t.dataset){const q=t.value.toLowerCase();document.querySelectorAll('.item[data-k]').forEach(r=>r.style.display=r.dataset.k.includes(q)?'':'none')}
 });
