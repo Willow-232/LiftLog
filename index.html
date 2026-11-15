@@ -49,6 +49,8 @@ nav button{flex:1;background:none;color:var(--sub);border-radius:0;padding:12px 
 .toast{background:var(--ok);color:#fff;padding:10px 14px;border-radius:10px;margin-bottom:10px;font-weight:600}
 .chart{width:100%;height:auto;background:var(--card);border:1px solid var(--ln);border-radius:12px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats .card{text-align:center;margin:0}.stats b{font-size:22px;display:block}
+.av{width:38px;height:38px;border-radius:50%;background:var(--ac);color:var(--on-ac);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+button[disabled]{opacity:.6;cursor:default}
 </style>
 </head>
 <body>
@@ -57,7 +59,7 @@ nav button{flex:1;background:none;color:var(--sub);border-radius:0;padding:12px 
 <div id="rest"><span id="rt"></span><span data-a="skip" style="cursor:pointer">Skip</span></div>
 <div id="kp" style="display:none"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="hide" class="o">⌨︎</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="+" class="o">+</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="-" class="o">−</button><button data-k=".">.</button><button data-k="0">0</button><button data-k="bk">⌫</button><button data-k="next" class="nx">→</button></div>
 <nav>
-<button data-t="w">🏋️<br>Workout</button><button data-t="h">🗒️<br>History</button><button data-t="s">📈<br>Stats</button><button data-t="e">💪<br>Exercises</button><button data-t="m">⚙️<br>More</button>
+<button data-t="w">🏋️<br>Workout</button><button data-t="h">🗒️<br>History</button><button data-t="s">📈<br>Stats</button><button data-t="e">💪<br>Exercises</button><button data-t="f">👥<br>Social</button><button data-t="m">⚙️<br>More</button>
 </nav>
 <script>
 const $=s=>document.querySelector(s);
@@ -138,7 +140,7 @@ const vRec=n=>{const r=recs(n),f=v=>v>0?Math.round(v*10)/10+' '+S.unit:'-',c=(v,
 const histBest=n=>Math.max(0,...S.workouts.flatMap(w=>w.ex.filter(e=>e.n===n).map(e=>best(e.sets))));
 
 function fix(){const a=S.active;if(a&&!a.ex.some(e=>e.sets.some(s=>s.d||s.w!==''||s.r!=='')))a.start=null}
-function persist(){clearTimeout(tmr);tmr=setTimeout(async()=>{const j=JSON.stringify(S);try{localStorage.setItem('liftlog',j)}catch(e){}if(uref){try{await uref.set({json:j})}catch(e){}}},400)}
+function persist(){clearTimeout(tmr);tmr=setTimeout(async()=>{const j=JSON.stringify(S);try{localStorage.setItem('liftlog',j)}catch(e){}sbBackupSoon();if(uref){try{await uref.set({json:j})}catch(e){}}},400)}
 async function init(){
   try{const j=localStorage.getItem('liftlog');if(j)S=Object.assign(S,JSON.parse(j))}catch(e){}
   fix();
@@ -307,7 +309,7 @@ function vMore(){
 }
 function render(){
   document.documentElement.toggleAttribute('data-cb',S.cb===1);
-  const _sh=$('.sheet'),_st=_sh?_sh.scrollTop:0;$('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'')+(ui.ce?vCEm():'')+(ui.st?vSt():'');
+  const _sh=$('.sheet'),_st=_sh?_sh.scrollTop:0;$('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,f:vSocial,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'')+(ui.ce?vCEm():'')+(ui.st?vSt():'');
   {const s2=$('.sheet');if(s2)s2.scrollTop=_st}if(cur&&!cur.isConnected){cur=null;$('#kp').style.display='none';document.body.classList.remove('kp')}document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   tick();
 }
@@ -389,12 +391,12 @@ document.addEventListener('click',async e=>{
       const clean=A.ex.map(x=>({n:x.n,sets:x.sets.filter(s=>s.d||+s.r>0).map(s=>({w:+s.w||0,r:+s.r||0,t:'wdf'.includes(s.t||'-')?s.t:''}))})).filter(x=>x.sets.length);
       if(!clean.length){ui.msg='Log at least one set first';break}
       const prs=clean.filter(x=>{const a=rc(x.sets),b=recs(x.n);return a.w>b.w||a.e>b.e||a.v>b.v}).length;
-      S.workouts.push({id:A.id,name:A.name||'Workout',date:Date.now(),dur:A.start?Date.now()-A.start:0,dl:!!A.dl,ex:clean});
+      S.workouts.push({id:A.id,name:A.name||'Workout',date:Date.now(),dur:A.start?Date.now()-A.start:0,dl:!!A.dl,ex:clean});sbQueue(A.id);
       if(A.save)S.routines.push({id:uid(),name:A.name||'Routine',ex:clean.map(x=>({n:x.n,k:x.sets.length}))});
       if(A.upd&&A.rid){const r=S.routines.find(y=>y.id===A.rid);if(r)r.ex=A.ex.map(e=>({n:e.n,k:e.sets.length}))}
       S.active=null;S.rest=0;ui.msg='Workout saved'+(prs?` · ${prs} PR${prs>1?'s':''} 🏆`:'');break}
     case 'hx':ui.hx=ui.hx===t.dataset.id?null:t.dataset.id;ui.hd=null;break;
-    case 'hdel':if(ui.hd===t.dataset.id){S.workouts=S.workouts.filter(w=>w.id!==t.dataset.id);ui.hd=null}else ui.hd=t.dataset.id;break;
+    case 'hdel':if(ui.hd===t.dataset.id){S.workouts=S.workouts.filter(w=>w.id!==t.dataset.id);sbUnshare(t.dataset.id);ui.hd=null}else ui.hd=t.dataset.id;break;
     case 'cadd':{const n=$('#cn').value.trim(),m=$('#cm').value.trim()||'Other',sc=$('#cs').value.split(',').map(s=>s.trim()).filter(Boolean);if(n&&!all().some(x=>x.name.toLowerCase()===n.toLowerCase()))S.custom.push({name:n,muscle:m,sec:sc});break}
     case 'cdel':S.custom=S.custom.filter(x=>x.name!==t.dataset.n);break;
     case 'set':S[t.dataset.k]=isNaN(+t.dataset.v)?t.dataset.v:+t.dataset.v;break;
@@ -445,7 +447,136 @@ document.addEventListener('touchstart',e=>{const rt=e.target.closest('.rt');if(!
 document.addEventListener('touchmove',e=>{const y=e.touches[0].clientY;if(!dr){if(dr0&&Math.abs(y-dr0.y)>10)clearTimeout(lp);return}e.preventDefault();dr.el.style.transform='translateY('+(y-dr.y0)+'px)';dr.over=null;document.querySelectorAll('.rt').forEach(c=>{c.classList.remove('over');if(c!==dr.el){const r=c.getBoundingClientRect();if(y>=r.top&&y<=r.bottom){dr.over=c;c.classList.add('over')}}})},{passive:false});
 const dfin=()=>{clearTimeout(lp);if(!dr)return;const d=dr;dr=null;swt=Date.now();d.el.style.transform='';d.el.classList.remove('dragging');document.querySelectorAll('.rt.over').forEach(c=>c.classList.remove('over'));if(d.over&&d.el.dataset.gn){const g=[...document.querySelectorAll('.rt[data-gn]')].map(c=>c.dataset.gn),a=g.indexOf(d.el.dataset.gn),b=g.indexOf(d.over.dataset.gn),[x]=g.splice(a,1);g.splice(b,0,x);S.gorder=g;persist();render()}else if(d.over){const a=+d.el.dataset.ri,b=+d.over.dataset.ri,[x]=S.routines.splice(a,1);S.routines.splice(b,0,x);persist();render()}};
 document.addEventListener('touchend',dfin);document.addEventListener('touchcancel',dfin);
+// ===== Social (optional). Uses Supabase over plain fetch; only active in the installed app (not inside Claude). =====
+const SB_URL='https://mekrfvcgfgropbjicmgf.supabase.co',SB_KEY='sb_publishable_LyexfknsJNVDr4gYPzUtRg_FmikyBVV';
+const SB_ON=!window.claude&&/^https?:$/.test(location.protocol);
+let SB={s:null,v:'feed',f:{},feed:null,lf:0,fl:null,fo:null,res:null,busy:false,err:null,msg:null,open:null,cm:{},conf:null,mode:'in',rec:false,inv:null,sp:0,rs:0};
+try{SB.s=JSON.parse(localStorage.getItem('liftlog_sb')||'null')}catch(e){}
+let SBQ=[];try{SBQ=JSON.parse(localStorage.getItem('liftlog_sbq')||'[]')}catch(e){}
+function sbSave(){try{localStorage.setItem('liftlog_sb',JSON.stringify(SB.s));localStorage.setItem('liftlog_sbq',JSON.stringify(SBQ))}catch(e){}}
+const sbE=e=>e instanceof TypeError||/failed to fetch|network|load failed/i.test(e.message||'')?"Can't reach the LiftLog server. Check your connection and try again.":(e.message||'Something went wrong');
+function sbSess(d){if(!d||!d.access_token)return false;const o=SB.s||{};SB.s=Object.assign(o,{at:d.access_token,rt:d.refresh_token||o.rt,exp:Date.now()+(+d.expires_in||3600)*1000});if(d.user){SB.s.uid=d.user.id;SB.s.email=d.user.email}sbSave();return true}
+async function sbAuth(path,body,tok){const h={apikey:SB_KEY,'Content-Type':'application/json'};if(tok)h.Authorization='Bearer '+tok;const r=await fetch(SB_URL+'/auth/v1/'+path,{method:body===undefined?'GET':(path==='user'?'PUT':'POST'),headers:h,body:body===undefined?undefined:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.msg||j.error_description||j.message||('Error '+r.status));e.status=r.status;throw e}return j}
+let sbRef=null;
+async function sbToken(){if(!SB.s)throw new Error('Not signed in');if(Date.now()>SB.s.exp-60000){if(!sbRef)sbRef=sbAuth('token?grant_type=refresh_token',{refresh_token:SB.s.rt}).then(sbSess).catch(e=>{if(e.status>=400&&e.status<500){sbOut();throw new Error('Your session expired. Please log in again.')}throw e}).finally(()=>{sbRef=null});await sbRef}return SB.s.at}
+async function sb(path,o={},again){const tk=await sbToken(),h={apikey:SB_KEY,Authorization:'Bearer '+tk};if(o.body!==undefined)h['Content-Type']='application/json';if(o.prefer)h.Prefer=o.prefer;const r=await fetch(SB_URL+'/rest/v1/'+path,{method:o.method||'GET',headers:h,body:o.body===undefined?undefined:JSON.stringify(o.body)});if(r.status===401&&!again&&SB.s){SB.s.exp=0;return sb(path,o,true)}const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}if(!r.ok){const e=new Error(j&&(j.message||j.msg)||('Error '+r.status));e.status=r.status;e.code=j&&j.code;throw e}return j}
+function sbOut(){const tk=SB.s&&SB.s.at;if(tk)fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+tk}}).catch(()=>{});SB.s=null;SBQ=[];SB.feed=null;SB.fl=SB.fo=SB.res=null;SB.cm={};SB.conf=null;SB.v='feed';sbSave()}
+async function sbLoadMe(){if(!SB.s.uid){const u=await sbAuth('user',undefined,await sbToken());SB.s.uid=u.id;SB.s.email=u.email}const p=await sb('profiles?id=eq.'+SB.s.uid+'&select=*');SB.s.me=p&&p[0]||null;sbSave()}
+async function sbAfterLogin(){await sbCheckBackup();sbFlush();sbLoadFeed()}
+async function sbMakeProfile(un){if(!/^[a-z0-9_]{3,20}$/.test(un))throw new Error('Usernames are 3–20 characters: lowercase letters, numbers or _');try{const p=await sb('profiles',{method:'POST',body:{id:SB.s.uid,username:un,display_name:(SB.f.dn||'').trim()||null},prefer:'return=representation'});SB.s.me=p[0];sbSave()}catch(e){if(e.code==='23505'||e.status===409)throw new Error('That username is taken. Try another.');throw e}await sbAfterLogin();if(SB.inv){SB.f.q=SB.inv;await sbSearch().catch(()=>{})}}
+// ---- cloud backup ----
+let sbBt=null;
+function sbBackupSoon(){if(!SB_ON||!SB.s||!SB.s.me||SB.conf)return;clearTimeout(sbBt);sbBt=setTimeout(()=>sbBackup().catch(()=>{}),15000)}
+async function sbBackup(){if(!SB.s||SB.conf)return;const now=new Date().toISOString(),d=JSON.parse(JSON.stringify(S));await sb('backups?on_conflict=user_id',{method:'POST',body:{user_id:SB.s.uid,data:d,updated_at:now},prefer:'resolution=merge-duplicates,return=minimal'});SB.s.lb=Date.parse(now);sbSave()}
+async function sbCheckBackup(){const r=await sb('backups?user_id=eq.'+SB.s.uid+'&select=updated_at'),c=r&&r[0];if(!c){SB.conf=null;await sbBackup();return}const t=Date.parse(c.updated_at);if(!S.workouts.length&&!S.routines.length&&!S.custom.length){await sbRestore();return}SB.conf=t>(SB.s.lb||0)+5000?t:null}
+async function sbRestore(){const r=await sb('backups?user_id=eq.'+SB.s.uid+'&select=data,updated_at');if(!r||!r[0])throw new Error('No cloud backup found yet');const d=r[0].data||{};if(S.active)d.active=S.active;S=Object.assign({unit:'kg',restSec:90,step:1.25,custom:[],routines:[],workouts:[],active:null,rest:0},d);SB.s.lb=Date.parse(r[0].updated_at);SB.conf=null;sbSave();fix();try{localStorage.setItem('liftlog',JSON.stringify(S))}catch(e){}persist()}
+// ---- sharing workouts ----
+function sbPost(w){const before=S.workouts.filter(x=>x.date<w.date&&x.id!==w.id),prs=[],u=S.unit;
+  const ex=w.ex.map(e=>{const ss=e.sets.filter(s=>s.t!=='w'),b=ss.reduce((m,s)=>!m||score(s)>score(m)?s:m,null),a=rc(e.sets),o=rc(before.flatMap(x=>x.ex.filter(y=>y.n===e.n).flatMap(y=>y.sets)));
+    if(o.w>0||o.v>0){if(a.w>o.w)prs.push({n:e.n,k:'Heaviest weight',v:a.w});else if(a.e>o.e)prs.push({n:e.n,k:'Best 1RM',v:Math.round(a.e*10)/10});if(a.v>o.v)prs.push({n:e.n,k:'Best set volume',v:Math.round(a.v)})}
+    return{n:e.n,s:ss.length,w:b?b.w:0,r:b?b.r:0,u}});
+  return{user_id:SB.s.uid,local_id:w.id,title:(w.name||'Workout')+(w.dl?' (deload)':''),started_at:new Date(w.date-(w.dur||0)).toISOString(),duration_sec:Math.round((w.dur||0)/1000),total_volume:Math.round(w.ex.reduce((t,e)=>t+vol(e.sets),0)),set_count:w.ex.reduce((t,e)=>t+e.sets.filter(s=>s.t!=='w').length,0),exercises:ex,prs}}
+function sbQueue(id){if(!SB_ON||!SB.s||!SB.s.me)return;if(!SBQ.includes(id))SBQ.push(id);sbSave();sbFlush()}
+let sbFl=false;
+async function sbFlush(){if(sbFl||!SB.s||!SB.s.me||!SBQ.length)return;sbFl=true;let n=0;try{const m=SB.s.me.share_mode||'all';while(SBQ.length){const w=S.workouts.find(x=>x.id===SBQ[0]);if(w&&m!=='none'){const p=sbPost(w);if(m==='prs')p.exercises=p.exercises.filter(e=>p.prs.some(x=>x.n===e.n));if(m==='all'||p.prs.length){await sb('workouts?on_conflict=user_id,local_id',{method:'POST',body:p,prefer:'resolution=merge-duplicates,return=minimal'});n++}}SBQ.shift();sbSave()}}catch(e){}finally{sbFl=false}if(n){SB.feed=null;if(tab==='f'&&SB.v==='feed'&&!SB.busy)sbLoadFeed()}}
+function sbUnshare(id){if(!SB_ON)return;SBQ=SBQ.filter(x=>x!==id);sbSave();if(SB.s&&SB.s.me)sb('workouts?user_id=eq.'+SB.s.uid+'&local_id=eq.'+encodeURIComponent(id),{method:'DELETE'}).then(()=>{SB.feed=null}).catch(()=>{})}
+// ---- loading ----
+async function sbLoadFeed(){if(SB.lf)return;SB.lf=1;try{SB.feed=await sb('workouts?select=*,profiles(username,display_name),reactions(user_id),comments(count)&order=started_at.desc&limit=40');SB.err=null}catch(e){SB.err=sbE(e);if(!SB.feed)SB.feed=[]}SB.lf=0;if(tab==='f'&&!SB.busy)render()}
+async function sbLoadFr(){const u=SB.s.uid;try{const[a,b]=await Promise.all([sb('follows?follower_id=eq.'+u+'&select=p:profiles!follows_following_id_fkey(id,username,display_name)'),sb('follows?following_id=eq.'+u+'&select=p:profiles!follows_follower_id_fkey(id,username,display_name)')]);SB.fl=a.map(x=>x.p).filter(Boolean);SB.fo=b.map(x=>x.p).filter(Boolean);SB.err=null}catch(e){SB.err=sbE(e);SB.fl=SB.fl||[];SB.fo=SB.fo||[]}if(tab==='f'&&!SB.busy)render()}
+async function sbSearch(){const q=(SB.f.q||'').trim().toLowerCase().replace(/^@/,'').replace(/[^a-z0-9_]/g,'');if(q.length<2)throw new Error('Type at least 2 characters of a username');SB.res=await sb('profiles?username=ilike.*'+q+'*&id=neq.'+SB.s.uid+'&select=id,username,display_name&order=username&limit=20');if(SB.fl===null)await sbLoadFr()}
+async function sbLoadCm(id){try{SB.cm[id]=await sb('comments?workout_id=eq.'+id+'&select=id,body,user_id,created_at,profiles(username)&order=created_at')}catch(e){SB.err=sbE(e);SB.cm[id]=SB.cm[id]||[]}if(tab==='f')render()}
+async function sbStart(){if(!SB_ON||!SB.s)return;try{await sbLoadMe();if(SB.s&&SB.s.me&&!SB.rec){await sbAfterLogin();if(SB.inv){SB.f.q=SB.inv;await sbSearch()}}}catch(e){if(tab==='f')SB.err=sbE(e)}if(tab==='f')render()}
+// ---- views ----
+const sbAgo=t=>{const s=(Date.now()-Date.parse(t))/1000;if(isNaN(s))return '';return s<60?'just now':s<3600?Math.floor(s/60)+'m ago':s<86400?Math.floor(s/3600)+'h ago':s<604800?Math.floor(s/86400)+'d ago':new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})};
+const sbAv=p=>`<span class="av">${esc(((p&&(p.display_name||p.username))||'?').trim().charAt(0).toUpperCase())}</span>`;
+const sbIn=(k,ph,type='text',extra='')=>`<input data-sbf="${k}" type="${type}" placeholder="${ph}" value="${esc(SB.f[k]||'')}" ${extra} style="margin-top:8px">`;
+const sbB=(a,l,cls='',v='')=>`<button class="${cls}" data-a="${a}" ${v!==''?`data-v="${esc(v)}"`:''} ${SB.busy?'disabled':''}>${l}</button>`;
+const sbK=n=>n>=10000?Math.round(n/1000)+'k':n>=1000?Math.round(n/100)/10+'k':String(Math.round(n||0));
+function vSocial(){
+  let h='<h2>Social</h2>';
+  if(!SB_ON)return h+`<div class="card"><b>Share workouts with friends</b><div class="sub" style="margin-top:6px">Social features work in the installed LiftLog app (the version on your Home Screen from GitHub Pages). This copy runs inside Claude, which can't connect to the LiftLog server. Everything else works here as usual.</div></div>`;
+  if(SB.msg)h+=`<div class="toast">${esc(SB.msg)}</div>`;
+  if(SB.err)h+=`<div class="card" style="border-color:var(--bad);color:var(--bad)">${esc(SB.err)}</div>`;
+  if(!SB.s)return h+vSbAuth();
+  if(SB.rec)return h+`<div class="card"><b>Set a new password</b>${sbIn('np','New password (8+ characters)','password','autocomplete="new-password"')}<div class="row">${sbB('sbnp','Save password')}</div></div>`;
+  if(!SB.s.me)return h+`<div class="card"><b>Choose your username</b><div class="sub">Friends find you by this. Lowercase letters, numbers and _ only.</div>${sbIn('un','username','text','autocapitalize="none" autocomplete="username"')}${sbIn('dn','Display name (optional)')}<div class="row">${sbB('sbprof','Continue')}${sbB('sbout','Log out','ghost')}</div></div>`;
+  if(SB.conf)h+=`<div class="card"><b>Cloud backup found</b><div class="sub">There's a backup from ${new Date(SB.conf).toLocaleString(undefined,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})} that's different from this phone's data. Which do you want to keep? Automatic backup is paused until you choose.</div><div class="row">${sbB('sbuse','Use cloud backup')}${sbB('sbkeep','Keep this phone\'s data','ghost')}</div></div>`;
+  h+=`<div class="row" style="margin-bottom:14px">${[['feed','Feed'],['fr','Friends'],['me','Profile']].map(([k,l])=>`<button class="${SB.v===k?'':'ghost'}" data-a="sbv" data-v="${k}">${l}</button>`).join('')}</div>`;
+  return h+(SB.v==='fr'?vSbFr():SB.v==='me'?vSbMe():vSbFeed());
+}
+function vSbAuth(){const up=SB.mode==='up';
+  return `<div class="card"><b>Share workouts with friends</b><div class="sub" style="margin-top:6px">Optional. LiftLog works fully without an account. Sign up to see what your friends are lifting, share your workouts and PRs, and back up your data automatically.</div></div>
+  <div class="card"><div class="row" style="margin:0 0 4px">${sbB('sbmode',up?'Log in':'Log in',up?'ghost':'','in')}${sbB('sbmode','Sign up',up?'':'ghost','up')}</div>
+  ${up?sbIn('un','Username (e.g. mike_lifts)','text','autocapitalize="none" autocomplete="username"'):''}${sbIn('em','Email','email','autocapitalize="none" autocomplete="email"')}${sbIn('pw',up?'Password (8+ characters)':'Password','password',`autocomplete="${up?'new-password':'current-password'}"`)}
+  <div class="row">${sbB(up?'sbup':'sbin',SB.busy?'Please wait…':up?'Create account':'Log in','big')}</div>
+  ${up?'<div class="sub" style="margin-top:8px">Your workouts stay on this phone too. You choose what gets shared in Profile.</div>':`<div class="row">${sbB('sbforgot','Forgot password?','ghost')}</div>`}</div>`}
+function sbCard(w){const p=w.profiles||{},me=w.user_id===SB.s.uid,R=w.reactions||[],lk=R.some(r=>r.user_id===SB.s.uid),nc=w.comments&&w.comments[0]?w.comments[0].count:(SB.cm[w.id]||[]).length,o=SB.open===w.id,ex=w.exercises||[],u=(ex[0]&&ex[0].u)||'kg',sh=o?ex:ex.slice(0,5);
+  return `<div class="card"><div class="row" style="margin:0;flex-wrap:nowrap">${sbAv(p)}<div style="flex:1;min-width:0"><b>${esc(p.display_name||p.username||'Someone')}</b> <span class="sub">@${esc(p.username||'')}</span><div class="sub">${sbAgo(w.started_at)}</div></div>${me?'<span class="sub">You</span>':''}</div>
+  <div style="margin-top:10px;font-weight:700;font-size:17px">${esc(w.title||'Workout')}</div>
+  <div class="sub">${w.duration_sec?fdur(w.duration_sec*1000)+' · ':''}${sbK(w.total_volume)} ${esc(u)} volume · ${w.set_count||0} set${w.set_count===1?'':'s'}</div>
+  ${(w.prs||[]).length?`<div style="margin-top:8px">${w.prs.map(x=>`<div class="sub" style="color:var(--tx)">🏅 <b>${esc(x.n)}</b> · ${esc(x.k)} ${x.v} ${esc(u)}</div>`).join('')}</div>`:''}
+  ${sh.length?`<div style="margin-top:8px">${sh.map(e=>`<div class="row sp" style="margin:3px 0;flex-wrap:nowrap"><span style="min-width:0">${e.s} × ${esc(e.n)}</span><span class="sub" style="white-space:nowrap">${e.w>0?e.w+' '+esc(e.u||u)+' × '+e.r:e.r+' reps'}</span></div>`).join('')}${ex.length>sh.length?`<div class="sub" data-a="sbopen" data-v="${w.id}" style="cursor:pointer">+ ${ex.length-sh.length} more</div>`:''}</div>`:''}
+  <div class="row"><button class="${lk?'':'ghost'}" data-a="sblike" data-v="${w.id}">${lk?'♥':'♡'} ${R.length||''}</button><button class="ghost" data-a="sbopen" data-v="${w.id}">💬 ${nc||''}</button></div>
+  ${o?`<div style="margin-top:8px">${SB.cm[w.id]?SB.cm[w.id].map(c=>`<div class="row sp" style="margin:6px 0;flex-wrap:nowrap;align-items:flex-start"><span style="min-width:0"><b>@${esc(c.profiles&&c.profiles.username||'')}</b> ${esc(c.body)}<span class="sub"> · ${sbAgo(c.created_at)}</span></span>${c.user_id===SB.s.uid?`<span class="sub" data-a="sbcdel" data-v="${c.id}" data-w="${w.id}" style="cursor:pointer;padding:0 4px">✕</span>`:''}</div>`).join('')||'<div class="sub">No comments yet.</div>':'<div class="sub">Loading comments…</div>'}<div class="row" style="flex-wrap:nowrap"><input data-sbf="c${w.id}" placeholder="Add a comment…" maxlength="500" value="${esc(SB.f['c'+w.id]||'')}">${sbB('sbcpost','Post','',w.id)}</div></div>`:''}</div>`}
+function vSbFeed(){if(SB.feed===null&&!SB.lf)sbLoadFeed();
+  const L=SB.feed||[];let h=`<div class="row sp" style="margin:0 0 10px"><span class="sub">You and the people you follow</span>${sbB('sbref','↻ Refresh','ghost')}</div>`;
+  if(SBQ.length)h+=`<div class="sub" style="margin-bottom:8px">${SBQ.length} workout${SBQ.length>1?'s':''} waiting to post. They'll go up when you're online.</div>`;
+  if(SB.feed===null)return h+'<p class="sub">Loading feed…</p>';
+  if(!L.length)return h+`<div class="card"><b>Nothing here yet</b><div class="sub" style="margin-top:4px">Finish a workout to post your first one, or follow friends in the Friends tab to see theirs.</div><div class="row">${sbB('sbv','Find friends','','fr')}</div></div>`;
+  return h+L.map(sbCard).join('')}
+function vSbFr(){if(SB.fl===null)sbLoadFr();const fid=new Set((SB.fl||[]).map(p=>p.id));
+  const row=p=>`<div class="item" style="cursor:default;align-items:center"><div style="display:flex;gap:10px;align-items:center;min-width:0">${sbAv(p)}<div style="min-width:0"><b>${esc(p.display_name||p.username)}</b><div class="sub">@${esc(p.username)}</div></div></div>${fid.has(p.id)?sbB('sbunf','Following','ghost',p.id):sbB('sbfol','Follow','',p.id)}</div>`;
+  const link=location.origin+location.pathname+'#add-'+SB.s.me.username;
+  return `<div class="card"><b>Find people</b><div class="row" style="flex-wrap:nowrap">${`<input data-sbf="q" placeholder="Search by username" autocapitalize="none" value="${esc(SB.f.q||'')}">`}${sbB('sbfind','Search')}</div>${SB.res?(SB.res.length?SB.res.map(row).join(''):'<div class="sub" style="margin-top:8px">No one found with that username.</div>'):''}</div>
+  <div class="card"><b>Invite a friend</b><div class="sub" style="margin-top:4px">Send them this link. When they open it and sign up, they can follow you straight away.</div><div class="sub" style="margin-top:6px;word-break:break-all;color:var(--tx)">${esc(link)}</div><div class="row">${sbB('sbcopy','Copy invite link','ghost')}</div></div>
+  <h3>Following (${SB.fl?SB.fl.length:'…'})</h3>${SB.fl?(SB.fl.length?`<div class="card" style="padding:4px 12px">${SB.fl.map(row).join('')}</div>`:'<p class="sub">You\'re not following anyone yet.</p>'):'<p class="sub">Loading…</p>'}
+  <h3>Followers (${SB.fo?SB.fo.length:'…'})</h3>${SB.fo?(SB.fo.length?`<div class="card" style="padding:4px 12px">${SB.fo.map(row).join('')}</div>`:'<p class="sub">No followers yet.</p>'):'<p class="sub">Loading…</p>'}`}
+function vSbMe(){const m=SB.s.me,sm=m.share_mode||'all',lb=SB.s.lb;
+  const D={all:'Every workout you finish is posted to your followers.',prs:'Only workouts with a new PR are posted, showing just the PR exercises.',none:'Nothing is posted. You can still see your friends\' workouts.'};
+  return `<div class="card"><div class="row" style="margin:0;flex-wrap:nowrap">${sbAv(m)}<div style="min-width:0"><b>${esc(m.display_name||m.username)}</b><div class="sub">@${esc(m.username)} · ${esc(SB.s.email||'')}</div></div></div><div class="row" style="flex-wrap:nowrap">${`<input data-sbf="dn2" placeholder="Display name" value="${esc(SB.f.dn2!=null?SB.f.dn2:(m.display_name||''))}">`}${sbB('sbdn','Save','ghost')}</div></div>
+  <div class="card"><b>What to share</b><div class="row">${[['all','Everything'],['prs','PRs only'],['none','Nothing']].map(([k,l])=>sbB('sbsm',l,sm===k?'':'ghost',k)).join('')}</div><div class="sub" style="margin-top:6px">${D[sm]}</div>
+  ${sm!=='none'?`<div class="row">${sbB('sbpast',SB.sp?`Tap again to share ${S.workouts.length} workouts`:'Share past workouts','ghost')}</div><div class="sub">Posts your existing history so friends can see it. Deleting a workout from History also removes it from the feed.</div>`:''}</div>
+  <div class="card"><b>Cloud backup</b><div class="sub" style="margin-top:4px">${SB.conf?'Paused until you choose which data to keep (see above).':lb?'Backed up automatically. Last backup '+sbAgo(new Date(lb).toISOString())+'.':'Not backed up yet.'} Only you can see your backup.</div><div class="row">${sbB('sbbk','Back up now','ghost')}${sbB('sbrs',SB.rs?'Tap again to replace this phone\'s data':'Restore from backup','ghost')}</div></div>
+  <button class="ghost big" data-a="sbout">Log out</button><div class="sub" style="margin-top:6px;text-align:center">Logging out keeps all your workouts on this phone.</div>`}
+// ---- events ----
+document.addEventListener('input',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.sbf;if(k!=null)SB.f[k]=e.target.value});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a^="sb"]');if(!t||!SB_ON)return;const a=t.dataset.a,v=t.dataset.v;
+  const run=async(f,ok)=>{if(SB.busy)return;SB.busy=true;SB.err=null;SB.msg=null;render();try{await f();if(ok)SB.msg=ok}catch(x){SB.err=sbE(x)}SB.busy=false;render()};
+  if(a!=='sbpast')SB.sp=0;if(a!=='sbrs')SB.rs=0;
+  switch(a){
+    case 'sbmode':SB.mode=v;SB.err=SB.msg=null;render();break;
+    case 'sbv':SB.v=v;SB.err=SB.msg=null;window.scrollTo(0,0);render();break;
+    case 'sbin':run(async()=>{const em=(SB.f.em||'').trim();if(!em||!SB.f.pw)throw new Error('Enter your email and password');sbSess(await sbAuth('token?grant_type=password',{email:em,password:SB.f.pw}));SB.f.pw='';await sbLoadMe();if(SB.s.me)await sbAfterLogin()});break;
+    case 'sbup':run(async()=>{const em=(SB.f.em||'').trim(),pw=SB.f.pw||'',un=(SB.f.un||'').trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(un))throw new Error('Usernames are 3–20 characters: lowercase letters, numbers or _');if(!/^\S+@\S+\.\S+$/.test(em))throw new Error('Enter a valid email');if(pw.length<8)throw new Error('Password needs at least 8 characters');const d=await sbAuth('signup',{email:em,password:pw});SB.f.pw='';if(!sbSess(d)){SB.mode='in';SB.msg='Account created. Check your email to confirm it, then log in.';return}await sbMakeProfile(un)});break;
+    case 'sbforgot':run(async()=>{const em=(SB.f.em||'').trim();if(!em)throw new Error('Enter your email above first');await sbAuth('recover',{email:em})},'If that email has an account, a reset link is on its way.');break;
+    case 'sbnp':run(async()=>{const pw=SB.f.np||'';if(pw.length<8)throw new Error('Password needs at least 8 characters');await sbAuth('user',{password:pw},await sbToken());SB.rec=false;SB.f.np='';await sbLoadMe();if(SB.s.me)await sbAfterLogin()},'Password updated');break;
+    case 'sbprof':run(()=>sbMakeProfile((SB.f.un||'').trim().toLowerCase()));break;
+    case 'sbout':sbOut();SB.msg='Logged out. Your workouts are still on this phone.';render();break;
+    case 'sbref':SB.feed=null;SB.err=null;render();break;
+    case 'sbopen':SB.open=SB.open===v?null:v;if(SB.open&&!SB.cm[v])sbLoadCm(v);render();break;
+    case 'sblike':{const w=(SB.feed||[]).find(x=>x.id===v);if(!w)break;const R=w.reactions=w.reactions||[],me=SB.s.uid,on=R.some(r=>r.user_id===me);if(on)w.reactions=R.filter(r=>r.user_id!==me);else R.push({user_id:me});haptic();render();(on?sb('reactions?workout_id=eq.'+v+'&user_id=eq.'+me,{method:'DELETE'}):sb('reactions',{method:'POST',body:{workout_id:v,user_id:me},prefer:'return=minimal'})).catch(x=>{SB.err=sbE(x);SB.feed=null;render()});break}
+    case 'sbcpost':run(async()=>{const b=(SB.f['c'+v]||'').trim();if(!b)return;await sb('comments',{method:'POST',body:{workout_id:v,user_id:SB.s.uid,body:b},prefer:'return=minimal'});SB.f['c'+v]='';const w=(SB.feed||[]).find(x=>x.id===v);if(w&&w.comments&&w.comments[0])w.comments[0].count++;SB.cm[v]=await sb('comments?workout_id=eq.'+v+'&select=id,body,user_id,created_at,profiles(username)&order=created_at')});break;
+    case 'sbcdel':run(async()=>{const wid=t.dataset.w;await sb('comments?id=eq.'+v,{method:'DELETE'});SB.cm[wid]=(SB.cm[wid]||[]).filter(c=>c.id!==v);const w=(SB.feed||[]).find(x=>x.id===wid);if(w&&w.comments&&w.comments[0])w.comments[0].count=Math.max(0,w.comments[0].count-1)});break;
+    case 'sbfind':run(sbSearch);break;
+    case 'sbfol':run(async()=>{await sb('follows',{method:'POST',body:{follower_id:SB.s.uid,following_id:v},prefer:'return=minimal'});SB.feed=null;await sbLoadFr()});break;
+    case 'sbunf':run(async()=>{await sb('follows?follower_id=eq.'+SB.s.uid+'&following_id=eq.'+v,{method:'DELETE'});SB.feed=null;await sbLoadFr()});break;
+    case 'sbcopy':{const l=location.origin+location.pathname+'#add-'+SB.s.me.username;(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(()=>{SB.msg='Invite link copied'},()=>{SB.msg='Copy the link above to share it'}).then(render);break}
+    case 'sbdn':run(async()=>{const d=(SB.f.dn2!=null?SB.f.dn2:'').trim()||null;const p=await sb('profiles?id=eq.'+SB.s.uid,{method:'PATCH',body:{display_name:d},prefer:'return=representation'});SB.s.me=p[0];sbSave();SB.f.dn2=null;SB.feed=null},'Saved');break;
+    case 'sbsm':run(async()=>{const p=await sb('profiles?id=eq.'+SB.s.uid,{method:'PATCH',body:{share_mode:v},prefer:'return=representation'});SB.s.me=p[0];sbSave()});break;
+    case 'sbpast':if(!SB.sp){SB.sp=1;render();break}SB.sp=0;run(async()=>{S.workouts.forEach(w=>{if(!SBQ.includes(w.id))SBQ.push(w.id)});sbSave();await sbFlush();if(SBQ.length)throw new Error("Some workouts couldn't be posted yet. They'll go up when you're online.");SB.feed=null},'Past workouts shared');break;
+    case 'sbbk':run(sbBackup,'Backed up');break;
+    case 'sbrs':if(!SB.rs){SB.rs=1;render();break}SB.rs=0;run(sbRestore,'Restored from your cloud backup');break;
+    case 'sbuse':run(sbRestore,'Restored from your cloud backup');break;
+    case 'sbkeep':run(async()=>{SB.conf=null;await sbBackup()},"This phone's data is now your backup");break;
+  }
+});
+if(SB_ON){
+  if(/access_token=/.test(location.hash)){const p=new URLSearchParams(location.hash.slice(1));sbSess({access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),expires_in:p.get('expires_in')});if(p.get('type')==='recovery')SB.rec=true;try{history.replaceState(null,'',location.pathname)}catch(e){}tab='f'}
+  else{const m=location.hash.match(/^#add-([a-z0-9_]{3,20})$/);if(m){SB.inv=m[1];tab='f';SB.v='fr';SB.f.q=m[1];if(!SB.s)SB.mode='up';SB.msg=SB.s?null:'Sign up or log in to follow @'+m[1];try{history.replaceState(null,'',location.pathname)}catch(e){}}}
+  addEventListener('online',()=>{sbFlush();sbBackupSoon()});
+}
 init();
+sbStart();
 if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});}
 </script>
 </body>
