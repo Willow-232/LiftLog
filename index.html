@@ -57,7 +57,7 @@ button[disabled]{opacity:.6;cursor:default}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--gl:rgba(36,30,54,.58);--gl2:rgba(44,38,66,.44);--glb:rgba(255,255,255,.13);--glh:rgba(255,255,255,.2);--gls:0 10px 32px rgba(0,0,0,.5);--b1:rgba(140,100,255,.3);--b2:rgba(236,72,153,.14);--b3:rgba(56,132,255,.17)}}
 :root[data-theme="dark"]{--gl:rgba(36,30,54,.58);--gl2:rgba(44,38,66,.44);--glb:rgba(255,255,255,.13);--glh:rgba(255,255,255,.2);--gls:0 10px 32px rgba(0,0,0,.5);--b1:rgba(140,100,255,.3);--b2:rgba(236,72,153,.14);--b3:rgba(56,132,255,.17)}
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(70% 45% at 8% 0%,var(--b1),transparent 70%),radial-gradient(55% 40% at 100% 38%,var(--b2),transparent 70%),radial-gradient(70% 45% at 18% 100%,var(--b3),transparent 70%),var(--bg)}
-main{padding-bottom:124px}
+main{padding-bottom:124px;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) + 1px);min-height:calc(100lvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) + 1px)}
 .card,.chart{background:var(--gl2);border:1px solid var(--glb);border-radius:20px;box-shadow:inset 0 1px 0 var(--glh),0 2px 12px rgba(40,20,90,.07)}.stats .card{border-radius:16px}
 button{border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 button:not(.ghost){background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 65%)}
