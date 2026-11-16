@@ -51,6 +51,31 @@ nav button{flex:1;background:none;color:var(--sub);border-radius:0;padding:12px 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats .card{text-align:center;margin:0}.stats b{font-size:22px;display:block}
 .av{width:38px;height:38px;border-radius:50%;background:var(--ac);color:var(--on-ac);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
 button[disabled]{opacity:.6;cursor:default}
+
+/* Liquid glass */
+:root{--gl:rgba(255,255,255,.6);--gl2:rgba(255,255,255,.46);--glb:rgba(255,255,255,.78);--glh:rgba(255,255,255,.95);--gls:0 10px 32px rgba(40,20,90,.16);--b1:rgba(112,72,232,.24);--b2:rgba(236,72,153,.13);--b3:rgba(56,132,255,.15)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--gl:rgba(36,30,54,.58);--gl2:rgba(44,38,66,.44);--glb:rgba(255,255,255,.13);--glh:rgba(255,255,255,.2);--gls:0 10px 32px rgba(0,0,0,.5);--b1:rgba(140,100,255,.3);--b2:rgba(236,72,153,.14);--b3:rgba(56,132,255,.17)}}
+:root[data-theme="dark"]{--gl:rgba(36,30,54,.58);--gl2:rgba(44,38,66,.44);--glb:rgba(255,255,255,.13);--glh:rgba(255,255,255,.2);--gls:0 10px 32px rgba(0,0,0,.5);--b1:rgba(140,100,255,.3);--b2:rgba(236,72,153,.14);--b3:rgba(56,132,255,.17)}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(70% 45% at 8% 0%,var(--b1),transparent 70%),radial-gradient(55% 40% at 100% 38%,var(--b2),transparent 70%),radial-gradient(70% 45% at 18% 100%,var(--b3),transparent 70%),var(--bg)}
+main{padding-bottom:124px}
+.card,.chart{background:var(--gl2);border:1px solid var(--glb);border-radius:20px;box-shadow:inset 0 1px 0 var(--glh),0 2px 12px rgba(40,20,90,.07)}.stats .card{border-radius:16px}
+button{border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+button:not(.ghost){background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 65%)}
+button.ghost{background:var(--gl2);border-color:var(--glb);box-shadow:inset 0 1px 0 var(--glh)}
+input,select{background:color-mix(in srgb,var(--bg) 55%,transparent);border-radius:12px}
+.chk{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.toast{border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.chip{background:var(--gl2);border-color:var(--glb)}
+nav{left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;padding:4px;border-radius:30px;background:var(--gl);border:1px solid var(--glb);box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+nav button:not(.ghost){background:transparent;box-shadow:none;border-radius:24px;padding:8px 2px;font-size:11px}nav button.on:not(.ghost){background:color-mix(in srgb,var(--ac) 16%,transparent)}
+#rest{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-width:536px;margin:0 auto;border-radius:22px;background:color-mix(in srgb,var(--ac) 84%,transparent);border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),var(--gls);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%)}
+.modal{background:rgba(10,6,24,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.sheet{background:var(--gl);border:1px solid var(--glb);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
+#kp{background:color-mix(in srgb,var(--bg) 86%,transparent);border-top:1px solid var(--glb);border-radius:26px 26px 0 0;box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}
+#kp button{background:var(--gl2);border:1px solid var(--glb);border-radius:16px;box-shadow:inset 0 1px 0 var(--glh)}#kp .o{background:color-mix(in srgb,var(--ln) 70%,transparent)}#kp .nx{background:var(--ac);border-color:var(--ac)}
+.sgb button{padding:8px 14px;font-size:15px}.swin{background:transparent}.swact{opacity:0;transition:opacity .2s}.sw.open .swact{opacity:1}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){nav,.sheet,#kp{background:var(--card)}}
+@media(prefers-reduced-transparency:reduce){nav,.sheet,#kp,#rest,.modal{-webkit-backdrop-filter:none;backdrop-filter:none}nav,.sheet,#kp,.card,.chart{background:var(--card)}#rest{background:var(--ac)}}
 </style>
 </head>
 <body>
@@ -449,7 +474,7 @@ document.addEventListener('touchend',dfin);document.addEventListener('touchcance
 // ===== Social (optional). Uses Supabase over plain fetch; only active in the installed app (not inside Claude). =====
 const SB_URL='https://mekrfvcgfgropbjicmgf.supabase.co',SB_KEY='sb_publishable_LyexfknsJNVDr4gYPzUtRg_FmikyBVV';
 const SB_ON=!window.claude&&/^https?:$/.test(location.protocol);
-let SB={s:null,v:'feed',f:{},feed:null,lf:0,fl:null,fo:null,res:null,busy:false,err:null,msg:null,open:null,cm:{},conf:null,mode:'in',rec:false,inv:null,sp:0,rs:0};
+let SB={sg:null,lsg:0,sga:false,s:null,v:'feed',f:{},feed:null,lf:0,fl:null,fo:null,res:null,busy:false,err:null,msg:null,open:null,cm:{},conf:null,mode:'in',rec:false,inv:null,sp:0,rs:0};
 try{SB.s=JSON.parse(localStorage.getItem('liftlog_sb')||'null')}catch(e){}
 let SBQ=[];try{SBQ=JSON.parse(localStorage.getItem('liftlog_sbq')||'[]')}catch(e){}
 function sbSave(){try{localStorage.setItem('liftlog_sb',JSON.stringify(SB.s));localStorage.setItem('liftlog_sbq',JSON.stringify(SBQ))}catch(e){}}
@@ -459,7 +484,7 @@ async function sbAuth(path,body,tok){const h={apikey:SB_KEY,'Content-Type':'appl
 let sbRef=null;
 async function sbToken(){if(!SB.s)throw new Error('Not signed in');if(Date.now()>SB.s.exp-60000){if(!sbRef)sbRef=sbAuth('token?grant_type=refresh_token',{refresh_token:SB.s.rt}).then(sbSess).catch(e=>{if(e.status>=400&&e.status<500){sbOut();throw new Error('Your session expired. Please log in again.')}throw e}).finally(()=>{sbRef=null});await sbRef}return SB.s.at}
 async function sb(path,o={},again){const tk=await sbToken(),h={apikey:SB_KEY,Authorization:'Bearer '+tk};if(o.body!==undefined)h['Content-Type']='application/json';if(o.prefer)h.Prefer=o.prefer;const r=await fetch(SB_URL+'/rest/v1/'+path,{method:o.method||'GET',headers:h,body:o.body===undefined?undefined:JSON.stringify(o.body)});if(r.status===401&&!again&&SB.s){SB.s.exp=0;return sb(path,o,true)}const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}if(!r.ok){const e=new Error(j&&(j.message||j.msg)||('Error '+r.status));e.status=r.status;e.code=j&&j.code;throw e}return j}
-function sbOut(){const tk=SB.s&&SB.s.at;if(tk)fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+tk}}).catch(()=>{});SB.s=null;SBQ=[];SB.feed=null;SB.fl=SB.fo=SB.res=null;SB.cm={};SB.conf=null;SB.v='feed';sbSave()}
+function sbOut(){const tk=SB.s&&SB.s.at;if(tk)fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+tk}}).catch(()=>{});SB.s=null;SBQ=[];SB.feed=null;SB.fl=SB.fo=SB.res=SB.sg=null;SB.cm={};SB.conf=null;SB.v='feed';sbSave()}
 async function sbLoadMe(){if(!SB.s.uid){const u=await sbAuth('user',undefined,await sbToken());SB.s.uid=u.id;SB.s.email=u.email}const p=await sb('profiles?id=eq.'+SB.s.uid+'&select=*');SB.s.me=p&&p[0]||null;sbSave()}
 async function sbAfterLogin(){await sbCheckBackup();sbFlush();sbLoadFeed()}
 async function sbMakeProfile(un){if(!/^[a-z0-9_]{3,20}$/.test(un))throw new Error('Usernames are 3–20 characters: lowercase letters, numbers or _');try{const p=await sb('profiles',{method:'POST',body:{id:SB.s.uid,username:un,display_name:(SB.f.dn||'').trim()||null},prefer:'return=representation'});SB.s.me=p[0];sbSave()}catch(e){if(e.code==='23505'||e.status===409)throw new Error('That username is taken. Try another.');throw e}await sbAfterLogin();if(SB.inv){SB.f.q=SB.inv;await sbSearch().catch(()=>{})}}
@@ -482,6 +507,8 @@ function sbUnshare(id){if(!SB_ON)return;SBQ=SBQ.filter(x=>x!==id);sbSave();if(SB
 // ---- loading ----
 async function sbLoadFeed(){if(SB.lf)return;SB.lf=1;try{SB.feed=await sb('workouts?select=*,profiles!workouts_user_id_fkey(username,display_name),reactions(user_id),comments(count)&order=started_at.desc&limit=40');SB.err=null}catch(e){SB.err=sbE(e);if(!SB.feed)SB.feed=[]}SB.lf=0;if(tab==='f'&&!SB.busy)render()}
 async function sbLoadFr(){const u=SB.s.uid;try{const[a,b]=await Promise.all([sb('follows?follower_id=eq.'+u+'&select=p:profiles!follows_following_id_fkey(id,username,display_name)'),sb('follows?following_id=eq.'+u+'&select=p:profiles!follows_follower_id_fkey(id,username,display_name)')]);SB.fl=a.map(x=>x.p).filter(Boolean);SB.fo=b.map(x=>x.p).filter(Boolean);SB.err=null}catch(e){SB.err=sbE(e);SB.fl=SB.fl||[];SB.fo=SB.fo||[]}if(tab==='f'&&!SB.busy)render()}
+async function sbLoadSg(){if(SB.lsg)return;SB.lsg=1;try{let r;try{r=await sb('rpc/suggest_friends',{method:'POST',body:{lim:30}})}catch(e){if(e.status!==404&&e.code!=='PGRST202')throw e;if(SB.fl===null)await sbLoadFr();const fid=new Set(SB.fl.map(p=>p.id)),fo=new Set((SB.fo||[]).map(p=>p.id));r=(await sb('profiles?id=neq.'+SB.s.uid+'&select=id,username,display_name&order=username&limit=50')).filter(p=>!fid.has(p.id)).map(p=>Object.assign(p,{mutuals:0,mutual_names:[],follows_you:fo.has(p.id)})).sort((a,b)=>b.follows_you-a.follows_you)}SB.sg=r||[]}catch(e){SB.sg=SB.sg||[]}SB.lsg=0;if(tab==='f'&&!SB.busy)render()}
+const sgWhy=p=>{const n=(p.mutual_names||[]).filter(Boolean).map(esc),m=+p.mutuals||0,r=m-n.length,o=[];if(p.follows_you)o.push('Follows you');if(m)o.push(!n.length?'Followed by '+m+' people you follow':'Followed by '+(r>0?n.join(', ')+' and '+r+' other'+(r>1?'s':''):n.join(' and ')));return o.join(' · ')||'On LiftLog'};
 async function sbSearch(){const q=(SB.f.q||'').trim().toLowerCase().replace(/^@/,'').replace(/[^a-z0-9_]/g,'');if(q.length<2)throw new Error('Type at least 2 characters of a username');SB.res=await sb('profiles?username=ilike.*'+q+'*&id=neq.'+SB.s.uid+'&select=id,username,display_name&order=username&limit=20');if(SB.fl===null)await sbLoadFr()}
 async function sbLoadCm(id){try{SB.cm[id]=await sb('comments?workout_id=eq.'+id+'&select=id,body,user_id,created_at,profiles!comments_user_id_fkey(username)&order=created_at')}catch(e){SB.err=sbE(e);SB.cm[id]=SB.cm[id]||[]}if(tab==='f')render()}
 async function sbStart(){if(!SB_ON||!SB.s)return;try{await sbLoadMe();if(SB.s&&SB.s.me&&!SB.rec){await sbAfterLogin();if(SB.inv){SB.f.q=SB.inv;await sbSearch()}}}catch(e){if(tab==='f')SB.err=sbE(e)}if(tab==='f')render()}
@@ -523,10 +550,13 @@ function vSbFeed(){if(SB.feed===null&&!SB.lf)sbLoadFeed();
   if(SB.feed===null)return h+'<p class="sub">Loading feed…</p>';
   if(!L.length)return h+`<div class="card"><b>Nothing here yet</b><div class="sub" style="margin-top:4px">Finish a workout to post your first one, or follow friends in the Friends tab to see theirs.</div><div class="row">${sbB('sbv','Find friends','','fr')}</div></div>`;
   return h+L.map(sbCard).join('')}
-function vSbFr(){if(SB.fl===null)sbLoadFr();const fid=new Set((SB.fl||[]).map(p=>p.id));
+function vSbFr(){if(SB.fl===null)sbLoadFr();if(SB.sg===null&&!SB.lsg)sbLoadSg();const fid=new Set((SB.fl||[]).map(p=>p.id));
+  const hid=new Set(SB.s.hide||[]),sg=(SB.sg||[]).filter(p=>!hid.has(p.id)&&!fid.has(p.id)),sgs=SB.sga?sg:sg.slice(0,5);
+  const sgRow=p=>`<div class="item" style="cursor:default;align-items:center;gap:8px"><div style="display:flex;gap:10px;align-items:center;min-width:0;flex:1">${sbAv(p)}<div style="min-width:0"><b>${esc(p.display_name||p.username)}</b><div class="sub">@${esc(p.username)}</div><div class="sub" style="color:var(--ac)">${sgWhy(p)}</div></div></div><div class="sgb" style="display:flex;gap:6px;align-items:center;flex:none">${sbB('sbfol',p.follows_you?'Follow back':'Follow','',p.id)}<button class="ghost" data-a="sbhide" data-v="${esc(p.id)}" aria-label="Hide suggestion" style="padding:8px 12px">✕</button></div></div>`;
+  const sgh=SB.sg===null?'<div class="sub" style="margin-top:6px">Finding people you may know…</div>':sg.length?sgs.map(sgRow).join('')+(sg.length>5?`<button class="ghost" data-a="sbsga" style="width:100%;margin-top:8px">${SB.sga?'Show fewer':'See all '+sg.length}</button>`:''):'<div class="sub" style="margin-top:6px">No new suggestions right now. Invite more friends below.</div>';
   const row=p=>`<div class="item" style="cursor:default;align-items:center"><div style="display:flex;gap:10px;align-items:center;min-width:0">${sbAv(p)}<div style="min-width:0"><b>${esc(p.display_name||p.username)}</b><div class="sub">@${esc(p.username)}</div></div></div>${fid.has(p.id)?sbB('sbunf','Following','ghost',p.id):sbB('sbfol','Follow','',p.id)}</div>`;
   const link=location.origin+location.pathname+'#add-'+SB.s.me.username;
-  return `<div class="card"><b>Find people</b><div class="row" style="flex-wrap:nowrap">${`<input data-sbf="q" placeholder="Search by username" autocapitalize="none" value="${esc(SB.f.q||'')}">`}${sbB('sbfind','Search')}</div>${SB.res?(SB.res.length?SB.res.map(row).join(''):'<div class="sub" style="margin-top:8px">No one found with that username.</div>'):''}</div>
+  return `<div class="card"><b>Suggested for you</b><div class="sub">People your friends follow come first.</div>${sgh}</div><div class="card"><b>Find people</b><div class="row" style="flex-wrap:nowrap">${`<input data-sbf="q" placeholder="Search by username" autocapitalize="none" value="${esc(SB.f.q||'')}">`}${sbB('sbfind','Search')}</div>${SB.res?(SB.res.length?SB.res.map(row).join(''):'<div class="sub" style="margin-top:8px">No one found with that username.</div>'):''}</div>
   <div class="card"><b>Invite a friend</b><div class="sub" style="margin-top:4px">Send them this link. When they open it and sign up, they can follow you straight away.</div><div class="sub" style="margin-top:6px;word-break:break-all;color:var(--tx)">${esc(link)}</div><div class="row">${sbB('sbcopy','Copy invite link','ghost')}</div></div>
   <h3>Following (${SB.fl?SB.fl.length:'…'})</h3>${SB.fl?(SB.fl.length?`<div class="card" style="padding:4px 12px">${SB.fl.map(row).join('')}</div>`:'<p class="sub">You\'re not following anyone yet.</p>'):'<p class="sub">Loading…</p>'}
   <h3>Followers (${SB.fo?SB.fo.length:'…'})</h3>${SB.fo?(SB.fo.length?`<div class="card" style="padding:4px 12px">${SB.fo.map(row).join('')}</div>`:'<p class="sub">No followers yet.</p>'):'<p class="sub">Loading…</p>'}`}
@@ -557,8 +587,10 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-a^="sb"]')
     case 'sbcpost':run(async()=>{const b=(SB.f['c'+v]||'').trim();if(!b)return;await sb('comments',{method:'POST',body:{workout_id:v,user_id:SB.s.uid,body:b},prefer:'return=minimal'});SB.f['c'+v]='';const w=(SB.feed||[]).find(x=>x.id===v);if(w&&w.comments&&w.comments[0])w.comments[0].count++;SB.cm[v]=await sb('comments?workout_id=eq.'+v+'&select=id,body,user_id,created_at,profiles!comments_user_id_fkey(username)&order=created_at')});break;
     case 'sbcdel':run(async()=>{const wid=t.dataset.w;await sb('comments?id=eq.'+v,{method:'DELETE'});SB.cm[wid]=(SB.cm[wid]||[]).filter(c=>c.id!==v);const w=(SB.feed||[]).find(x=>x.id===wid);if(w&&w.comments&&w.comments[0])w.comments[0].count=Math.max(0,w.comments[0].count-1)});break;
     case 'sbfind':run(sbSearch);break;
-    case 'sbfol':run(async()=>{await sb('follows',{method:'POST',body:{follower_id:SB.s.uid,following_id:v},prefer:'return=minimal'});SB.feed=null;await sbLoadFr()});break;
-    case 'sbunf':run(async()=>{await sb('follows?follower_id=eq.'+SB.s.uid+'&following_id=eq.'+v,{method:'DELETE'});SB.feed=null;await sbLoadFr()});break;
+    case 'sbfol':run(async()=>{await sb('follows',{method:'POST',body:{follower_id:SB.s.uid,following_id:v},prefer:'return=minimal'});SB.feed=null;SB.sg=null;await sbLoadFr()});break;
+    case 'sbhide':SB.s.hide=[...new Set([...(SB.s.hide||[]),v])];sbSave();render();break;
+    case 'sbsga':SB.sga=!SB.sga;render();break;
+    case 'sbunf':run(async()=>{await sb('follows?follower_id=eq.'+SB.s.uid+'&following_id=eq.'+v,{method:'DELETE'});SB.feed=null;SB.sg=null;await sbLoadFr()});break;
     case 'sbcopy':{const l=location.origin+location.pathname+'#add-'+SB.s.me.username;(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(()=>{SB.msg='Invite link copied'},()=>{SB.msg='Copy the link above to share it'}).then(render);break}
     case 'sbdn':run(async()=>{const d=(SB.f.dn2!=null?SB.f.dn2:'').trim()||null;const p=await sb('profiles?id=eq.'+SB.s.uid,{method:'PATCH',body:{display_name:d},prefer:'return=representation'});SB.s.me=p[0];sbSave();SB.f.dn2=null;SB.feed=null},'Saved');break;
     case 'sbsm':run(async()=>{const p=await sb('profiles?id=eq.'+SB.s.uid,{method:'PATCH',body:{share_mode:v},prefer:'return=representation'});SB.s.me=p[0];sbSave()});break;
