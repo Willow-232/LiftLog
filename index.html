@@ -30,7 +30,7 @@ h2{margin:6px 0 12px;font-size:24px}h3{margin:20px 0 8px;font-size:15px;color:va
 .sub{color:var(--sub);font-size:13px}.row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}.sp{justify-content:space-between}
 button{font:inherit;border:0;border-radius:10px;padding:9px 14px;background:var(--ac);color:var(--on-ac);font-weight:600;cursor:pointer}
 button.ghost{background:transparent;color:var(--sub);border:1px solid var(--ln)}button.big{width:100%;padding:14px;font-size:17px}
-button.red{background:#e03131}
+button.red{background:#e03131;color:#fff}
 input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:9px;padding:8px;width:100%}
 input.title{font-size:22px;font-weight:700;border:0;background:transparent;padding:4px 0}
 .set{display:grid;grid-template-columns:28px 1fr 80px 70px 40px;gap:6px;align-items:center;margin-top:6px}
@@ -474,7 +474,7 @@ document.addEventListener('touchend',dfin);document.addEventListener('touchcance
 // ===== Social (optional). Uses Supabase over plain fetch; only active in the installed app (not inside Claude). =====
 const SB_URL='https://mekrfvcgfgropbjicmgf.supabase.co',SB_KEY='sb_publishable_LyexfknsJNVDr4gYPzUtRg_FmikyBVV';
 const SB_ON=!window.claude&&/^https?:$/.test(location.protocol);
-let SB={sg:null,lsg:0,sga:false,s:null,v:'feed',f:{},feed:null,lf:0,fl:null,fo:null,res:null,busy:false,err:null,msg:null,open:null,cm:{},conf:null,mode:'in',rec:false,inv:null,sp:0,rs:0};
+let SB={del:0,sg:null,lsg:0,sga:false,s:null,v:'feed',f:{},feed:null,lf:0,fl:null,fo:null,res:null,busy:false,err:null,msg:null,open:null,cm:{},conf:null,mode:'in',rec:false,inv:null,sp:0,rs:0};
 try{SB.s=JSON.parse(localStorage.getItem('liftlog_sb')||'null')}catch(e){}
 let SBQ=[];try{SBQ=JSON.parse(localStorage.getItem('liftlog_sbq')||'[]')}catch(e){}
 function sbSave(){try{localStorage.setItem('liftlog_sb',JSON.stringify(SB.s));localStorage.setItem('liftlog_sbq',JSON.stringify(SBQ))}catch(e){}}
@@ -517,6 +517,7 @@ const sbAgo=t=>{const s=(Date.now()-Date.parse(t))/1000;if(isNaN(s))return '';re
 const sbAv=p=>`<span class="av">${esc(((p&&(p.display_name||p.username))||'?').trim().charAt(0).toUpperCase())}</span>`;
 const sbIn=(k,ph,type='text',extra='')=>`<input data-sbf="${k}" type="${type}" placeholder="${ph}" value="${esc(SB.f[k]||'')}" ${extra} style="margin-top:8px">`;
 const sbB=(a,l,cls='',v='')=>`<button class="${cls}" data-a="${a}" ${v!==''?`data-v="${esc(v)}"`:''} ${SB.busy?'disabled':''}>${l}</button>`;
+const SB_PRIV="Signing up stores your email, profile and a backup of your LiftLog data (including body weight) on LiftLog's Supabase server, so you can share workouts and restore them on a new phone. Workouts you share are visible to your followers. The app's owner can access this data to run the service. You can delete your account and data at any time in Social → Profile.";
 const sbK=n=>n>=10000?Math.round(n/1000)+'k':n>=1000?Math.round(n/100)/10+'k':String(Math.round(n||0));
 function vSocial(){
   let h='<h2>Social</h2>';
@@ -535,7 +536,7 @@ function vSbAuth(){const up=SB.mode==='up';
   <div class="card"><div class="row" style="margin:0 0 4px">${sbB('sbmode',up?'Log in':'Log in',up?'ghost':'','in')}${sbB('sbmode','Sign up',up?'':'ghost','up')}</div>
   ${up?sbIn('un','Username (e.g. mike_lifts)','text','autocapitalize="none" autocomplete="username"'):''}${sbIn('em','Email','email','autocapitalize="none" autocomplete="email"')}${sbIn('pw',up?'Password (8+ characters)':'Password','password',`autocomplete="${up?'new-password':'current-password'}"`)}
   <div class="row">${sbB(up?'sbup':'sbin',SB.busy?'Please wait…':up?'Create account':'Log in','big')}</div>
-  ${up?'<div class="sub" style="margin-top:8px">Your workouts stay on this phone too. You choose what gets shared in Profile.</div>':`<div class="row">${sbB('sbforgot','Forgot password?','ghost')}</div>`}</div>`}
+  ${up?`<div class="sub" style="margin-top:10px">${SB_PRIV} Your workouts stay on this phone too.</div>`:`<div class="row">${sbB('sbforgot','Forgot password?','ghost')}</div>`}</div>`}
 function sbCard(w){const p=w.profiles||{},me=w.user_id===SB.s.uid,R=w.reactions||[],lk=R.some(r=>r.user_id===SB.s.uid),nc=w.comments&&w.comments[0]?w.comments[0].count:(SB.cm[w.id]||[]).length,o=SB.open===w.id,ex=w.exercises||[],u=(ex[0]&&ex[0].u)||'kg',sh=o?ex:ex.slice(0,5);
   return `<div class="card"><div class="row" style="margin:0;flex-wrap:nowrap">${sbAv(p)}<div style="flex:1;min-width:0"><b>${esc(p.display_name||p.username||'Someone')}</b> <span class="sub">@${esc(p.username||'')}</span><div class="sub">${sbAgo(w.started_at)}</div></div>${me?'<span class="sub">You</span>':''}</div>
   <div style="margin-top:10px;font-weight:700;font-size:17px">${esc(w.title||'Workout')}</div>
@@ -565,13 +566,14 @@ function vSbMe(){const m=SB.s.me,sm=m.share_mode||'all',lb=SB.s.lb;
   return `<div class="card"><div class="row" style="margin:0;flex-wrap:nowrap">${sbAv(m)}<div style="min-width:0"><b>${esc(m.display_name||m.username)}</b><div class="sub">@${esc(m.username)} · ${esc(SB.s.email||'')}</div></div></div><div class="row" style="flex-wrap:nowrap">${`<input data-sbf="dn2" placeholder="Display name" value="${esc(SB.f.dn2!=null?SB.f.dn2:(m.display_name||''))}">`}${sbB('sbdn','Save','ghost')}</div></div>
   <div class="card"><b>What to share</b><div class="row">${[['all','Everything'],['prs','PRs only'],['none','Nothing']].map(([k,l])=>sbB('sbsm',l,sm===k?'':'ghost',k)).join('')}</div><div class="sub" style="margin-top:6px">${D[sm]}</div>
   ${sm!=='none'?`<div class="row">${sbB('sbpast',SB.sp?`Tap again to share ${S.workouts.length} workouts`:'Share past workouts','ghost')}</div><div class="sub">Posts your existing history so friends can see it. Deleting a workout from History also removes it from the feed.</div>`:''}</div>
-  <div class="card"><b>Cloud backup</b><div class="sub" style="margin-top:4px">${SB.conf?'Paused until you choose which data to keep (see above).':lb?'Backed up automatically. Last backup '+sbAgo(new Date(lb).toISOString())+'.':'Not backed up yet.'} Only you can see your backup.</div><div class="row">${sbB('sbbk','Back up now','ghost')}${sbB('sbrs',SB.rs?'Tap again to replace this phone\'s data':'Restore from backup','ghost')}</div></div>
+  <div class="card"><b>Cloud backup</b><div class="sub" style="margin-top:4px">${SB.conf?'Paused until you choose which data to keep (see above).':lb?'Backed up automatically. Last backup '+sbAgo(new Date(lb).toISOString())+'.':'Not backed up yet.'} In the app, only you can see your backup.</div><div class="row">${sbB('sbbk','Back up now','ghost')}${sbB('sbrs',SB.rs?'Tap again to replace this phone\'s data':'Restore from backup','ghost')}</div></div>
+  <div class="card"><b>Privacy</b><div class="sub" style="margin-top:4px">${SB_PRIV}</div>${SB.del?`<div class="card" style="margin:10px 0 0;border-color:var(--bad)"><b style="color:var(--bad)">Delete your account?</b><div class="sub" style="margin-top:4px">This permanently deletes your login, profile, shared workouts, likes, comments, follows and cloud backup. It can't be undone. Workouts on this phone stay here.</div><div class="row">${sbB('sbdel2',SB.busy?'Deleting…':'Delete forever','red')}${sbB('sbdelx','Cancel','ghost')}</div></div>`:`<div class="row">${sbB('sbdel','Delete my account','ghost')}</div>`}</div>
   <button class="ghost big" data-a="sbout">Log out</button><div class="sub" style="margin-top:6px;text-align:center">Logging out keeps all your workouts on this phone.</div>`}
 // ---- events ----
 document.addEventListener('input',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.sbf;if(k!=null)SB.f[k]=e.target.value});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a^="sb"]');if(!t||!SB_ON)return;const a=t.dataset.a,v=t.dataset.v;
   const run=async(f,ok)=>{if(SB.busy)return;SB.busy=true;SB.err=null;SB.msg=null;render();try{await f();if(ok)SB.msg=ok}catch(x){SB.err=sbE(x)}SB.busy=false;render()};
-  if(a!=='sbpast')SB.sp=0;if(a!=='sbrs')SB.rs=0;
+  if(a!=='sbpast')SB.sp=0;if(!/^sbdel/.test(a))SB.del=0;if(a!=='sbrs')SB.rs=0;
   switch(a){
     case 'sbmode':SB.mode=v;SB.err=SB.msg=null;render();break;
     case 'sbv':SB.v=v;SB.err=SB.msg=null;window.scrollTo(0,0);render();break;
@@ -588,6 +590,9 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-a^="sb"]')
     case 'sbcdel':run(async()=>{const wid=t.dataset.w;await sb('comments?id=eq.'+v,{method:'DELETE'});SB.cm[wid]=(SB.cm[wid]||[]).filter(c=>c.id!==v);const w=(SB.feed||[]).find(x=>x.id===wid);if(w&&w.comments&&w.comments[0])w.comments[0].count=Math.max(0,w.comments[0].count-1)});break;
     case 'sbfind':run(sbSearch);break;
     case 'sbfol':run(async()=>{await sb('follows',{method:'POST',body:{follower_id:SB.s.uid,following_id:v},prefer:'return=minimal'});SB.feed=null;SB.sg=null;await sbLoadFr()});break;
+    case 'sbdel':SB.del=1;render();break;
+    case 'sbdelx':SB.del=0;render();break;
+    case 'sbdel2':run(async()=>{try{await sb('rpc/delete_my_account',{method:'POST',body:{}})}catch(x){if(x.status===404||x.code==='PGRST202')throw new Error("Account deletion isn't set up on the server yet. Ask the app's owner.");throw x}SB.del=0;clearTimeout(sbBt);sbOut()},'Account deleted. Your workouts are still on this phone.');break;
     case 'sbhide':SB.s.hide=[...new Set([...(SB.s.hide||[]),v])];sbSave();render();break;
     case 'sbsga':SB.sga=!SB.sga;render();break;
     case 'sbunf':run(async()=>{await sb('follows?follower_id=eq.'+SB.s.uid+'&following_id=eq.'+v,{method:'DELETE'});SB.feed=null;SB.sg=null;await sbLoadFr()});break;
