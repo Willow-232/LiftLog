@@ -70,7 +70,7 @@ nav{left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom,0px));max-
 nav button:not(.ghost){background:transparent;box-shadow:none;border-radius:24px;padding:8px 2px;font-size:11px}nav button.on:not(.ghost){background:color-mix(in srgb,var(--ac) 16%,transparent)}
 #rest{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-width:536px;margin:0 auto;border-radius:22px;background:color-mix(in srgb,var(--ac) 84%,transparent);border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),var(--gls);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%)}
 .modal{background:rgba(10,6,24,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-.sheet{background:var(--gl);border:1px solid var(--glb);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
+.sheet{background:color-mix(in srgb,var(--bg) 88%,transparent);padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));border:1px solid var(--glb);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)}
 #kp{background:color-mix(in srgb,var(--bg) 86%,transparent);border-top:1px solid var(--glb);border-radius:26px 26px 0 0;box-shadow:inset 0 1px 0 var(--glh),var(--gls);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}
 #kp button{background:var(--gl2);border:1px solid var(--glb);border-radius:16px;box-shadow:inset 0 1px 0 var(--glh)}#kp .o{background:color-mix(in srgb,var(--ln) 70%,transparent)}#kp .nx{background:var(--ac);border-color:var(--ac)}
 .sgb button{padding:8px 14px;font-size:15px}.swin{background:transparent}.swact{opacity:0;transition:opacity .2s}.sw.open .swact{opacity:1}
@@ -163,11 +163,32 @@ const recs=n=>rc(S.workouts.flatMap(w=>w.ex.filter(e=>e.n===n).flatMap(e=>e.sets
 const vRec=n=>{const r=recs(n),f=v=>v>0?Math.round(v*10)/10+' '+S.unit:'-',c=(v,l)=>`<div class='card'><b style='font-size:16px'>${f(v)}</b><span class='sub'>${l}</span></div>`;return `<div class='stats' style='margin:8px 0'>${c(r.w,'Heaviest')}${c(r.e,'Est. 1RM')}${c(r.v,'Best set vol.')}</div>`};
 const histBest=n=>Math.max(0,...S.workouts.flatMap(w=>w.ex.filter(e=>e.n===n).map(e=>best(e.sets))));
 
+
+// ===== What's new + app tour =====
+const APP_VER='2026.11.16';
+// Newest first. Add an entry with every update.
+const CHANGES=[{v:'2026.11.16',d:'16 November 2026',items:['New liquid glass look, with a floating tab bar','Friend suggestions in Social → Friends, with people your friends follow first','Privacy notice, and Delete my account in Social → Profile','Haptics work again on iOS 26.5 and later','The tab bar now stays at the bottom on every page','This What\'s new screen, plus an app tour in More']}];
+const TOUR=[['👋','Welcome to LiftLog','Your workout log. It works offline and saves everything on this phone. Here\'s a quick look at the basics.'],
+['🏋️','Start a workout','On the <b>Workout</b> tab, start an empty workout or one of your routines. Build routines with <b>New routine</b>, and hold and drag a card to reorder them.'],
+['⌨️','Log your sets','Tap a kg or reps box to open the keypad. Grey numbers are what you did last time, so you know what to beat. Tap <b>✓</b> to finish a set and start the rest timer.'],
+['🏷️','Set types and swaps','Tap a set\'s number to mark it as a warm-up, drop or failure set. Machine taken? Tap <b>⇄ Swap</b>. Tap an exercise\'s name for how-to steps and your records.'],
+['📈','Track your progress','<b>History</b> keeps every session. <b>Stats</b> has exercise graphs, muscle charts, a monthly report, personal records and body weight.'],
+['💪','Exercises','Browse by machine brand or search everything. Add your own under <b>Custom</b>, then swipe left on one to edit or delete it.'],
+['👥','Train with friends','<b>Social</b> is optional. Follow friends, share workouts and PRs, and back up your data so you can restore it on a new phone.'],
+['⚙️','Make it yours','In <b>More</b>: units, rest timer, haptics, colour-blind friendly colours, and this tour if you want it again.']];
+let ov=null;
+function ovSeen(){try{localStorage.setItem('liftlog_seen',APP_VER)}catch(e){}}
+function ovInit(){let seen;try{seen=localStorage.getItem('liftlog_seen')}catch(e){return}if(seen===APP_VER)return;ov=!seen&&!S.workouts.length&&!S.routines.length?{k:'tour',i:0}:{k:'new',since:seen||''}}
+function vOv(){if(!ov)return'';
+  if(ov.k==='new'){const L=CHANGES.filter(c=>c.v>ov.since).slice(0,5);return `<div class="modal"><div class="sheet"><div class="row sp" style="margin:0 0 4px"><b style="font-size:22px">What's new</b><button class="ghost" data-a="ovx">Close</button></div>${L.map(c=>`<h3>${esc(c.d)}</h3><ul style="margin:0;padding-left:20px">${c.items.map(x=>`<li style="margin-bottom:7px">${esc(x)}</li>`).join('')}</ul>`).join('')}<div class="row" style="margin-top:16px"><button class="big" data-a="ovx">Got it</button></div><div class="row"><button class="ghost" data-a="ovtour" style="width:100%">Take the app tour</button></div></div></div>`}
+  const i=ov.i,t=TOUR[i],last=i===TOUR.length-1;
+  return `<div class="modal"><div class="sheet" style="text-align:center"><div class="row sp" style="margin:0"><span class="sub">${i+1} of ${TOUR.length}</span><button class="ghost" data-a="ovx">Skip</button></div><div style="font-size:54px;margin:14px 0 6px">${t[0]}</div><b style="font-size:21px">${t[1]}</b><p class="sub" style="font-size:15px;line-height:1.5;margin:8px 6px 16px;min-height:68px">${t[2]}</p><div style="display:flex;gap:6px;justify-content:center;margin-bottom:16px">${TOUR.map((_,k)=>`<span style="width:${k===i?18:7}px;height:7px;border-radius:4px;background:${k===i?'var(--ac)':'var(--ln)'}"></span>`).join('')}</div><div class="row" style="flex-wrap:nowrap">${i?`<button class="ghost big" data-a="ovb" style="flex:1">Back</button>`:''}<button class="big" data-a="${last?'ovx':'ovn'}" style="flex:2">${last?'Start lifting':'Next'}</button></div></div></div>`}
 function fix(){const a=S.active;if(a&&!a.ex.some(e=>e.sets.some(s=>s.d||s.w!==''||s.r!=='')))a.start=null}
 function persist(){clearTimeout(tmr);tmr=setTimeout(async()=>{const j=JSON.stringify(S);try{localStorage.setItem('liftlog',j)}catch(e){}sbBackupSoon();if(uref){try{await uref.set({json:j})}catch(e){}}},400)}
 async function init(){
   try{const j=localStorage.getItem('liftlog');if(j)S=Object.assign(S,JSON.parse(j))}catch(e){}
   fix();
+  ovInit();
   render();
   try{
     if(!window.claude)return;
@@ -327,13 +348,13 @@ function vEx(){
 }
 function vMore(){
   const seg=(k,vals)=>vals.map(v=>`<button class="${S[k]===v?'':'ghost'}" data-a="set" data-k="${k}" data-v="${v}">${v}${k==='restSec'?'s':''}</button>`).join('');
-  return `<h2>Settings</h2><div class="card"><b>Units</b><div class="row">${seg('unit',['kg','lb'])}</div></div><div class="card"><b>Rest timer</b><div class="row">${seg('restSec',[60,90,120,180])}</div></div><div class="card"><b>Colour-blind friendly colours</b><div class="row"><button class="${S.cb!==1?'':'ghost'}" data-a="set" data-k="cb" data-v="0">Default</button><button class="${S.cb===1?'':'ghost'}" data-a="set" data-k="cb" data-v="1">Blue / orange</button></div><div class="sub">Completed sets turn blue instead of green, and decreases show orange instead of red.</div></div><div class="card"><b>Haptic feedback on set tick</b><div class="row"><button class="${S.hap!=='off'?'':'ghost'}" data-a="set" data-k="hap" data-v="on">On</button><button class="${S.hap==='off'?'':'ghost'}" data-a="set" data-k="hap" data-v="off">Off</button></div><div class="sub">Works on iPhones with iOS 17.4 or later and on most Android phones.</div></div><div class="card"><b>Keypad +/− step (weight)</b><div class="row">${seg('step',[1.25,2.5,5])}</div></div>
+  return `<h2>Settings</h2><div class="card"><b>Units</b><div class="row">${seg('unit',['kg','lb'])}</div></div><div class="card"><b>Rest timer</b><div class="row">${seg('restSec',[60,90,120,180])}</div></div><div class="card"><b>Colour-blind friendly colours</b><div class="row"><button class="${S.cb!==1?'':'ghost'}" data-a="set" data-k="cb" data-v="0">Default</button><button class="${S.cb===1?'':'ghost'}" data-a="set" data-k="cb" data-v="1">Blue / orange</button></div><div class="sub">Completed sets turn blue instead of green, and decreases show orange instead of red.</div></div><div class="card"><b>Haptic feedback on set tick</b><div class="row"><button class="${S.hap!=='off'?'':'ghost'}" data-a="set" data-k="hap" data-v="on">On</button><button class="${S.hap==='off'?'':'ghost'}" data-a="set" data-k="hap" data-v="off">Off</button></div><div class="sub">Works on iPhones with iOS 17.4 or later and on most Android phones.</div></div><div class="card"><b>Keypad +/− step (weight)</b><div class="row">${seg('step',[1.25,2.5,5])}</div></div><div class="card"><b>Help</b><div class="row"><button class="ghost" data-a="ovnew">What's new</button><button class="ghost" data-a="ovtour">App tour</button></div></div>
   <div class="card"><b>Your data</b><div class="sub">Stored privately in your account, with a copy on this device. Export a JSON backup any time.</div><div class="row"><button data-a="export">Export JSON</button><button class="ghost" data-a="import">Import JSON</button><input type="file" id="imp" accept=".json,application/json" style="display:none"></div></div>
   <button class="ghost big" data-a="reset">${ui.rs?'Tap again to erase everything':'Reset all data'}</button>`;
 }
 function render(){
   document.documentElement.toggleAttribute('data-cb',S.cb===1);
-  const _sh=$('.sheet'),_st=_sh?_sh.scrollTop:0;$('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,f:vSocial,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'')+(ui.ce?vCEm():'')+(ui.st?vSt():'');
+  const _sh=$('.sheet'),_st=_sh?_sh.scrollTop:0;$('#app').innerHTML=({w:vWorkout,h:vHist,s:vStats,e:vEx,f:vSocial,m:vMore})[tab]()+(ui.pick?vPick():'')+(ui.info?vInfo():'')+(ui.ce?vCEm():'')+(ui.st?vSt():'')+vOv();
   {const s2=$('.sheet');if(s2)s2.scrollTop=_st}if(cur&&!cur.isConnected){cur=null;$('#kp').style.display='none';document.body.classList.remove('kp')}document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   tick();
 }
@@ -411,6 +432,11 @@ document.addEventListener('click',async e=>{
     case 'delset':A.ex[i].sets.pop();break;
     case 'chk':{const e=A.ex[i],s=e.sets[j],p=ph(e,j);if(!s.d&&p){if(s.w==='')s.w=p.w;if(s.r==='')s.r=p.r}s.d=!s.d;if(s.d)haptic();if(s.d&&!A.start)A.start=Date.now();S.rest=s.d?Date.now()+S.restSec*1000:0;break}
     case 'skip':S.rest=0;break;
+    case 'ovx':ov=null;ovSeen();break;
+    case 'ovn':ov.i=Math.min(TOUR.length-1,ov.i+1);break;
+    case 'ovb':ov.i=Math.max(0,ov.i-1);break;
+    case 'ovtour':ov={k:'tour',i:0};break;
+    case 'ovnew':ov={k:'new',since:''};break;
     case 'finish':{
       const clean=A.ex.map(x=>({n:x.n,sets:x.sets.filter(s=>s.d||+s.r>0).map(s=>({w:+s.w||0,r:+s.r||0,t:'wdf'.includes(s.t||'-')?s.t:''}))})).filter(x=>x.sets.length);
       if(!clean.length){ui.msg='Log at least one set first';break}
